@@ -1,0 +1,18 @@
+{
+  "name": "nativescript-reordering",
+  "main": "src/app.ts",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@nativescript/core": "~8.5.0",
+    "nativescript-vue": "3.0.0-beta.10"
+  },
+  "devDependencies": {
+    "@nativescript/tailwind": "^2.0.1",
+    "@nativescript/types": "~8.5.0",
+    "@nativescript/webpack": "~5.0.0",
+    "@types/node": "~17.0.21",
+    "tailwindcss": "^3.1.8",
+    "typescript": "^5.2.2"
+  }
+}
