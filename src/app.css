@@ -2,7 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-ActionBar {
-  background-color: #65adf1;
-  color: white;
+.m-icon-round {
+  font-family: "Material Symbols Rounded", "MaterialSymbolsRounded";
+  font-weight: 100;
+  font-size: 34;
+}
+
+.m-icon-outline {
+  font-family: "Material Symbols Outlined", "MaterialSymbolsOutlined";
+  font-weight: 100;
+  font-size: 34;
+}
+
+Label{
+  color: black;
 }

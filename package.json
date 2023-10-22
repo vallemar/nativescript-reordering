@@ -4,10 +4,14 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@nativescript/core": "~8.5.0",
+    "@nativescript-community/ui-collectionview": "^5.3.2",
+    "@nativescript/core": "~8.6.0",
+    "@nativescript/stackblitz": "^0.0.8",
     "nativescript-vue": "3.0.0-beta.10"
   },
   "devDependencies": {
+    "@nativescript/android": "8.6.2",
+    "@nativescript/ios": "8.6.1",
     "@nativescript/tailwind": "^2.0.1",
     "@nativescript/types": "~8.5.0",
     "@nativescript/webpack": "~5.0.0",
