@@ -20,18 +20,18 @@ itemList.value.forEach((element, i) => (element.normalizedWeek = normalizeArray(
 
 const updateIndex = () => itemList.value.forEach((element, i) => (element.index = i));
 updateIndex();
-function onItemReordered(e: any) {
-  console.log('onItemReordered', e.index);
-  (e.view as ContentView).opacity = 1;
-  (e.view as ContentView).backgroundColor = new Color("white");
 
+function onItemReordered(e: any) {
+  const view = (e.view as ContentView);
+  view.opacity = 1;
+  view.backgroundColor = new Color("white");
   updateIndex();
 }
 
 function onItemReorderStarting(e: any) {
-  console.log('onItemReorderStarting', e.index, e.view, (e.view as ContentView));
-  (e.view as ContentView).opacity = 0.7;
-  (e.view as ContentView).backgroundColor = new Color("#2020201e");
+  const view = (e.view as ContentView);
+  view.opacity = 0.7;
+  view.backgroundColor = new Color("#2020201e");
 }
 </script>
 
