@@ -1,22 +1,14 @@
 <script lang="ts" setup>
-import { Color, ContentView} from '@nativescript/core';
+import { Color, ContentView } from '@nativescript/core';
 import { ObservableArray } from '@nativescript/core';
 import { ref } from "nativescript-vue";
 import Icon from './Icon.vue';
-import { Data } from '~/types';
 import ItemWeek from './ItemWeek.vue';
-import { normalizeArray } from '~/utils';
+import { buildNormalizedWeek } from '~/utils';
+import { mockData } from '~/mockData';
 
 const collectionView = ref();
-
-const itemList = ref<ObservableArray<Data>>(new ObservableArray([
-  { title: 'Meditation', subtitle: "Every day", color: '#7f73eb', icon: "🧘", week: [2, 4, 1, 5, 3, 2] },
-  { title: 'Coding', subtitle: "Every day", color: '#6db7fd', icon: "👨‍💻", week: [3, 1, 4, 2, 5, 4] },
-  { title: 'Eat healthy', subtitle: "Every day", color: '#70d0a5', icon: "🥗", week: [5, 2, 1, 3, 4, 3] },
-  { title: 'Workout', subtitle: "Every week", color: '#ee7b83', icon: "🏋️", week: [4, 3, 5, 1, 2, 5] },
-  { title: 'Reading', subtitle: "Every day", color: '#fb9e5b', icon: "📚", week: [1, 5, 2, 4, 3, 2] }
-]));
-itemList.value.forEach((element, i) => (element.normalizedWeek = normalizeArray(element.week)));
+const itemList = ref(new ObservableArray(buildNormalizedWeek(mockData)));
 
 const updateIndex = () => itemList.value.forEach((element, i) => (element.index = i));
 updateIndex();
@@ -55,8 +47,7 @@ function onItemReorderStarting(e: any) {
             </GridLayout>
           </GridLayout>
           <CollectionView ref="collectionView" height="100%" :items="itemList" rowHeight="100" reorderEnabled
-            @itemReorderStarting="onItemReorderStarting" @itemReordered="onItemReordered"
-            :reorderLongPressEnabled="true">
+            @itemReorderStarting="onItemReorderStarting" @itemReordered="onItemReordered" :reorderLongPressEnabled="true">
             <template #default="{ item }">
               <StackLayout class="mx-2 rounded-2xl">
                 <GridLayout paddingLeft="5" columns="68, *, 155" class=" rounded-2xl">
