@@ -1,5 +1,5 @@
 import { showPopover, PopoverOptions } from "@nativescript-community/ui-popover";
-import { StackLayout, View } from "@nativescript/core";
+import { Color, StackLayout, View } from "@nativescript/core";
 import { createNativeView, ref } from "nativescript-vue";
 
 
@@ -7,8 +7,8 @@ export function usePopover(component: any, options?: Omit<PopoverOptions, "ancho
     const isOpen = ref()
     const isPresented = ref()
 
-    function open(viewTarget: View) { 
-        if(!isOpen.value){
+    function open(viewTarget: View) {
+        if (!isOpen.value) {
             const node = createNativeView(component);
             node.mount();
             const view = node.nativeView;
@@ -16,13 +16,15 @@ export function usePopover(component: any, options?: Omit<PopoverOptions, "ancho
             stackLayout.addChild(view);
             isOpen.value, isPresented.value = true;
 
-            showPopover(stackLayout, Object.assign({
-                anchor: viewTarget,
-                onDismiss: () => (isOpen.value, isPresented.value = false),
-                onTapOutside: () => (isPresented.value = false),
-            },
-            options))
-        }       
+            showPopover(stackLayout,
+                Object.assign({
+                    anchor: viewTarget,
+                    onDismiss: () => (isOpen.value, isPresented.value = false),
+                    onTapOutside: () => (isPresented.value = false),
+                    backgroundColor: new Color("white")
+                }, options)
+            );
+        }
     }
 
     return {
