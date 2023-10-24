@@ -1,27 +1,35 @@
 <script lang="ts" setup>
-import { Color, ContentView } from '@nativescript/core';
+import { Color, View } from '@nativescript/core';
 import { ObservableArray } from '@nativescript/core';
 import { ref } from "nativescript-vue";
-import Icon from './Icon.vue';
-import ItemWeek from './ItemWeek.vue';
+import Icon from '@/components/Icon.vue';
+import Menu from '@/components/Menu.vue';
+import ItemWeek from '@/components/ItemWeek.vue';
+import Overlay from '@/components/Overlay.vue';
 import { buildNormalizedWeek } from '~/utils';
 import { mockData } from '~/mockData';
+import { usePopover } from '~/usePopover';
+import { HorizontalPosition } from "@nativescript-community/ui-popover"
 
 const collectionView = ref();
 const itemList = ref(new ObservableArray(buildNormalizedWeek(mockData)));
+
+const { isPresented: isPresentedMenu, open: openMenu } = usePopover(Menu, {
+  horizPos: HorizontalPosition.ALIGN_LEFT
+});
 
 const updateIndex = () => itemList.value.forEach((element, i) => (element.index = i));
 updateIndex();
 
 function onItemReordered(e: any) {
-  const view = (e.view as ContentView);
+  const view = (e.view as View);
   view.opacity = 1;
   view.backgroundColor = new Color("white");
   updateIndex();
 }
 
 function onItemReorderStarting(e: any) {
-  const view = (e.view as ContentView);
+  const view = (e.view as View);
   view.opacity = 0.7;
   view.backgroundColor = new Color("#2020201e");
 }
@@ -33,7 +41,7 @@ function onItemReorderStarting(e: any) {
       <GridLayout>
         <StackLayout>
           <FlexboxLayout class="justify-between mx-2">
-            <Icon icon="more_horiz"></Icon>
+            <Icon icon="more_horiz" @tap="(event) => openMenu(event.object)"></Icon>
             <Icon icon="add"></Icon>
           </FlexboxLayout>
           <GridLayout columns="*,  155" height="70" class="mx-2">
@@ -69,6 +77,7 @@ function onItemReorderStarting(e: any) {
             </template>
           </CollectionView>
         </StackLayout>
+        <Overlay :show="isPresentedMenu"></Overlay>
       </GridLayout>
     </Page>
   </Frame>
