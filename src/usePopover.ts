@@ -4,8 +4,8 @@ import { createNativeView, ref } from "nativescript-vue";
 
 
 export function usePopover(component: any, options?: Omit<PopoverOptions, "anchor">) {
-    const isOpen = ref()
-    const isPresented = ref()
+    const isOpen = ref();
+    const isPresented = ref();
 
     function open(viewTarget: View) {
         if (!isOpen.value) {

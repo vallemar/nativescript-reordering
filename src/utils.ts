@@ -1,4 +1,4 @@
-import { Data } from "./types";
+import { Habit } from "./types";
 
 export function normalizeArray(array: number[]) {
   const maxOriginalValue = Math.max(...array);
@@ -17,7 +17,7 @@ export function normalizeArray(array: number[]) {
 }
 
 
-export function buildNormalizedWeek(data: Data[]) {
+export function buildNormalizedWeek(data: Habit[]) {
   data.forEach(item => {
     const array = item.week;
     const maxOriginalValue = Math.max(...array);
@@ -26,7 +26,7 @@ export function buildNormalizedWeek(data: Data[]) {
     const originalRange = maxOriginalValue - minOriginalValue;
     const desiredRange = 20 - 5;
 
-    item.normalizedWeek = array.map((value) => {
+    item.normalizedWeek = array.map((value: number) => {
       // Normalize the value within the new range
       const normalizedValue = 5 + ((value - minOriginalValue) / originalRange) * desiredRange;
       return normalizedValue;
@@ -36,3 +36,4 @@ export function buildNormalizedWeek(data: Data[]) {
 
   return data;
 }
+

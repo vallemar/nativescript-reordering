@@ -4,20 +4,22 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-     "postinstall": "patch-package"
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@nativescript-community/ui-collectionview": "^5.3.2",
     "@nativescript-community/ui-popover": "^0.1.9",
     "@nativescript-use/vue": "^0.0.22",
-    "@nativescript/core": "~8.6.0",
+    "@nativescript/core": "^8.6.0",
     "@nativescript/stackblitz": "^0.0.8",
     "nativescript-vue": "3.0.0-beta.10",
-    "patch-package": "^8.0.0"
+    "patch-package": "^8.0.0",
+    "pinia": "^2.1.7"
   },
   "devDependencies": {
     "@nativescript/android": "8.6.2",
     "@nativescript/ios": "8.6.1",
+    "@nativescript/preview-cli": "1.0.5",
     "@nativescript/tailwind": "^2.0.1",
     "@nativescript/types": "~8.5.0",
     "@nativescript/webpack": "~5.0.0",
