@@ -21,6 +21,7 @@ export const useHabitStore = defineStore('habit', () => {
         const habit = habits.value.getItem(index)
         habit.week[dayIndex] = value;
         habit.normalizedWeek = buildNormalizedWeek([habit])[0]?.normalizedWeek;
+        habits.value.setItem(index, habit);
     }
 
     function updateItem(habit: Habit) {
@@ -28,10 +29,10 @@ export const useHabitStore = defineStore('habit', () => {
         habits.value.setItem(index, habit);
     }
 
-    function updateIndex() {
+    function applyIndex() {
         habits.value.forEach((element, i) => (element.index = i));
     }
 
-    updateIndex();
-    return { habits, get, getIndex, updateItemWeek, updateIndex, updateItem }
+    applyIndex();
+    return { habits, get, getIndex, updateItemWeek, applyIndex, updateItem }
 })

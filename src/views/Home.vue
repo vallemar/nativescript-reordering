@@ -13,7 +13,7 @@ import { Periodicity } from '~/types';
 import type { CollectionView } from '@nativescript-community/ui-collectionview';
 
 const collectionViewRef = ref();
-const { habits, updateIndex } = useHabitStore();
+const { habits, applyIndex } = useHabitStore();
 
 const { isPresented: isPresentedMenu, open: openMenu } = usePopover(Menu, {
   horizPos: HorizontalPosition.ALIGN_LEFT
@@ -23,7 +23,7 @@ function onItemReordered(e: any) {
   const view = (e.view as View);
   view.opacity = 1;
   view.backgroundColor = new Color("white");
-  updateIndex();
+  applyIndex();
 }
 
 function onItemReorderStarting(e: any) {
