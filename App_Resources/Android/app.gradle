@@ -1,8 +1,6 @@
 // You can add your native dependencies here
 dependencies {
-//  implementation 'androidx.multidex:multidex:2.0.1'
-   // implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
-
+   implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
 }
 
 android {
