@@ -1,3 +1,4 @@
+import { toRaw } from "nativescript-vue";
 import { DAY_DATE_FORMAT } from "./mockData";
 import { Habit, HabitDay } from "./types";
 import dayjs from 'dayjs'
@@ -64,4 +65,12 @@ export function getShowDays() {
     })
   }
   return days;
+}
+
+export function isEqualObject(a: any, b: any){
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+export function cloneObject(object: any){
+  return JSON.parse(JSON.stringify(toRaw(object)));
 }

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Color, ObservableArray, View } from '@nativescript/core';
-import { ref, unref } from "nativescript-vue";
+import { ref, toRaw, unref } from "nativescript-vue";
 import Icon from '@/components/Icon.vue';
 import Menu from '@/components/Menu.vue';
 import ItemWeek from '@/components/ItemWeek.vue';
@@ -15,9 +15,10 @@ import type { CollectionViewWithSwipeMenu } from '@nativescript-community/ui-col
 import AddHabit from '~/components/AddHabit.vue';
 import { ANIMATION, SHADE_COVER } from '~/mockData';
 import { unrefView, useRootLayout } from '@nativescript-use/vue';
-import { getShowDays } from '@/utils';
+import { cloneObject, getShowDays, isEqualObject } from '@/utils';
 import Undo from '~/components/Undo.vue';
 import { StackLayout } from '@akylas/nativescript';
+import { useSyncObservableArray } from '~/useSyncObservableArray';
 
 const collectionViewRef = ref();
 const addHabitStepIndex = ref(0);
@@ -25,16 +26,37 @@ const { habits, applyIndex, findIndexHabitDay, deleteItemById, addItem, findInde
 const { isPresented: isPresentedMenu, open: openMenu } = usePopover(Menu, {
   horizPos: HorizontalPosition.ALIGN_LEFT
 });
-const items = new ObservableArray();
+const items = new ObservableArray(cloneObject(habits));
+const { sync } = useSyncObservableArray(habits as any, items, "id");
 const showDays = getShowDays();
 
 function syncData() {
-  const habitsList = unref(habits);
-  if (habitsList.length !== items.length) {
-    const diference = items.length - habitsList.length
-    items.splice(habitsList.length, diference)
-  }
-  habitsList.forEach((habit: Habit, index: number) => (items.setItem(index, habit)));
+  sync()
+  /*  const habitsList = cloneObject(habits);
+   const indexRemoved: number[] = [];
+   const indexAdd: number[] = [];
+   const indexToUpdate: number[] = [];
+ 
+   items.forEach((habit, index) =>{
+     if(!habitsList.find(habitSearch => habitSearch.id === habit.id)){
+       indexRemoved.push(index)
+     }
+   })
+   indexRemoved.forEach(index => items.splice(index, 1))
+ 
+   habitsList.forEach((habit, index) =>{
+     if(!items.find(habitSearch => habitSearch.id === habit.id)){
+       indexAdd.push(index)
+     }
+   })
+   indexAdd.forEach(index => ( items.splice( index, 0, habitsList[index] )))
+ 
+   items.forEach((habit, index) =>{
+     if(!isEqualObject(habit, habitsList.find(habitSearch => habitSearch.id === habit.id))){
+       indexToUpdate.push(index)
+     }
+   })
+   indexToUpdate.forEach(index => (items.setItem(index, toRaw(habitsList[index])))) */
 }
 
 
@@ -77,24 +99,31 @@ function removeItem(habit: Habit) {
   swipeMenu?.closeCurrentMenu();
   setTimeout(() => {
     deleteItemById(habit.id);
+    syncData();
     const { show, close } = useRootLayout(Undo, {
+      props: {
+        bg: habit.color
+      },
       rootLayoutOption: {
         shadeCover: {
-          opacity: 0
+          opacity: 0,
+          tapToClose: false
         },
         animation: ANIMATION("bottom"),
       },
       on: {
         undo: () => {
           addItem(habit, currentIndex);
+          syncData();
           close();
         }
       },
       closeTimerMillis: 4000
     })
-    show();
-
-  }, 150);
+    setTimeout(() => {
+      show();
+    }, 300);
+  }, 200);
 }
 function drawerTranslationFunction(side: string, width: number, value: number, delta: number, progress: number) {
   const result = {

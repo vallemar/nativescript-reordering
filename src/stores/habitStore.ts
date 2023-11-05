@@ -19,7 +19,6 @@ export const useHabitStore = defineStore('habit', () => {
 
     function deleteItemById(id: string) {
         habits.value.splice(findIndexById(id), 1)
-        console.log(habits.value.length);
         habitRepository.saveAll(habits.value);
     }
 
