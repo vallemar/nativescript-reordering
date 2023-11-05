@@ -56,7 +56,6 @@ export const useHabitStore = defineStore('habit', () => {
             habits.value.push(habit);
         }
 
-        applyIndex();
         habitRepository.saveAll(habits.value);
     }
 
@@ -79,10 +78,8 @@ export const useHabitStore = defineStore('habit', () => {
         return findIndexHabitDay(dayjs().format(DAY_DATE_FORMAT), habit)?.index;
     }
 
-    function applyIndex() {
-        habits.value.forEach((element, i) => (element.index = i));
+    function clone(listToCloneIndex: Habit[]) {
+        habits.value = listToCloneIndex;
     }
-
-    applyIndex();
-    return { habits, findById, getIndex, getTodayHabitDayIndex, updateOrAddItemWeek, applyIndex, updateItem, addItem, findIndexHabitDay, findIndexById, deleteItemById }
+    return { habits, findById, getIndex, getTodayHabitDayIndex, updateOrAddItemWeek, updateItem, addItem, findIndexHabitDay, findIndexById, deleteItemById, clone }
 })

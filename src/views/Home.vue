@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { Color, ObservableArray, View } from '@nativescript/core';
-import { ref, toRaw, unref } from "nativescript-vue";
+import { ObservableArray, View } from '@nativescript/core';
+import { ref } from "nativescript-vue";
 import Icon from '@/components/Icon.vue';
 import Menu from '@/components/Menu.vue';
 import ItemWeek from '@/components/ItemWeek.vue';
@@ -19,58 +19,35 @@ import { cloneObject, getShowDays, isEqualObject } from '@/utils';
 import Undo from '~/components/Undo.vue';
 import { StackLayout } from '@akylas/nativescript';
 import { useSyncObservableArray } from '~/useSyncObservableArray';
+import { storeToRefs } from 'pinia';
 
 const collectionViewRef = ref();
 const addHabitStepIndex = ref(0);
-const { habits, applyIndex, findIndexHabitDay, deleteItemById, addItem, findIndexById } = useHabitStore();
+const habitStore = useHabitStore();
+const { habits: habitRef } = storeToRefs(habitStore);
+const { clone, findIndexHabitDay, deleteItemById, addItem, findIndexById } = habitStore;
 const { isPresented: isPresentedMenu, open: openMenu } = usePopover(Menu, {
   horizPos: HorizontalPosition.ALIGN_LEFT
 });
-const items = new ObservableArray(cloneObject(habits));
-const { sync } = useSyncObservableArray(habits as any, items, "id");
+
+const items = new ObservableArray(cloneObject(habitRef.value));
+const { sync } = useSyncObservableArray(habitRef.value as any, items, { addRemoveByField: "id" });
 const showDays = getShowDays();
 
 function syncData() {
-  sync()
-  /*  const habitsList = cloneObject(habits);
-   const indexRemoved: number[] = [];
-   const indexAdd: number[] = [];
-   const indexToUpdate: number[] = [];
- 
-   items.forEach((habit, index) =>{
-     if(!habitsList.find(habitSearch => habitSearch.id === habit.id)){
-       indexRemoved.push(index)
-     }
-   })
-   indexRemoved.forEach(index => items.splice(index, 1))
- 
-   habitsList.forEach((habit, index) =>{
-     if(!items.find(habitSearch => habitSearch.id === habit.id)){
-       indexAdd.push(index)
-     }
-   })
-   indexAdd.forEach(index => ( items.splice( index, 0, habitsList[index] )))
- 
-   items.forEach((habit, index) =>{
-     if(!isEqualObject(habit, habitsList.find(habitSearch => habitSearch.id === habit.id))){
-       indexToUpdate.push(index)
-     }
-   })
-   indexToUpdate.forEach(index => (items.setItem(index, toRaw(habitsList[index])))) */
+  sync(habitRef.value as any)
 }
-
 
 function onItemReordered(e: any) {
   const view = (e.view as StackLayout);
   view.opacity = 1;
-  // view.backgroundColor = new Color("white");
-  applyIndex();
+  clone(cloneObject(items));
+  syncData();
 }
 
 function onItemReorderStarting(e: any) {
   const view = (e.view as View);
   view.opacity = 0.7;
-  // view.backgroundColor = new Color("#2020201e");
 }
 
 function addHabit() {

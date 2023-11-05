@@ -1,42 +1,75 @@
 import { ObservableArray } from "@nativescript/core";
-import { toRaw } from "nativescript-vue";
+import { toRaw, unref } from "nativescript-vue";
 
-export function useSyncObservableArray(array: any[], observableArray: ObservableArray<any>, field: string) {
+const baseExcludeCompareFields = { startingSide: null, menuOpened: null };
 
-    function sync() {
-        const itemList = cloneObject(array);
-        const indexRemoved: number[] = [];
-        const indexAdd: number[] = [];
-        const indexToUpdate: number[] = [];
 
-        observableArray.forEach((itemObservable, index) => {
-            if (!itemList.find((item: any) => isEqualObject(item, itemObservable))) {
-                indexRemoved.push(index)
-            }
-        })
-        indexRemoved.forEach(index => observableArray.splice(index, 1))
+export function useSyncObservableArray(array: any[], observableArray: ObservableArray<any>,
+    options: {
+        addRemoveByField?: string,
+        checkRemoved?: boolean,
+        checkAdded?: boolean,
+        checkUpdate?: boolean,
+        excludeCompareFields?: any
+    } = {}) {
+    const { checkRemoved = true, checkAdded = true, checkUpdate = true, checkPosition = true, excludeCompareFields, addRemoveByField = null } = options;
+    const excludeFields = { ...baseExcludeCompareFields, ...excludeCompareFields };
 
-        itemList.forEach((item: any, index: number) => {
-            if (!observableArray.find(itemObservable => isEqualObject(itemObservable, item))) {
-                indexAdd.push(index)
-            }
-        })
-        indexAdd.forEach(index => (observableArray.splice(index, 0, itemList[index])))
+    function sync(newArray: any) {
+        const itemList = newArray ? cloneObject(newArray) : cloneObject(array);
 
-        observableArray.forEach((itemObservable, index) => {
-            if (!isEqualObject(itemObservable, itemList.find((item: any) => isEqualObject(item, itemObservable)))) {
-                indexToUpdate.push(index)
-            }
-        })
-        indexToUpdate.forEach(index => (observableArray.setItem(index, toRaw(itemList[index]))))
+        if (checkRemoved) {
+            const indexRemoved: number[] = [];
+            observableArray.forEach((itemObservable: any, index: number) => {
+                if (addRemoveByField) {
+                    if (!itemList.find((item: any) => item[addRemoveByField] === itemObservable[addRemoveByField])) {
+                        indexRemoved.push(index);
+                    }
+                } else {
+                    if (!itemList.find((item: any) => isEqualObject(item, itemObservable, excludeFields))) {
+                        indexRemoved.push(index);
+                    }
+                }
+            })
+            indexRemoved.forEach(index => observableArray.splice(index, 1))
+        }
+
+        if (checkAdded) {
+            const indexAdd: number[] = [];
+            itemList.forEach((item: any, index: number) => {
+                if (addRemoveByField) {
+                    if (!observableArray.find((itemObservable: any) => itemObservable[addRemoveByField] === item[addRemoveByField])) {
+                        indexAdd.push(index);
+                    }
+                } else {
+                    if (!observableArray.find((itemObservable: any) => isEqualObject(itemObservable, item, excludeFields))) {
+                        indexAdd.push(index);
+                    }
+                }
+            })
+            indexAdd.forEach(index => (observableArray.splice(index, 0, itemList[index])));
+        }
+
+        if (checkUpdate) {
+            const indexToUpdate: number[] = [];
+            observableArray.forEach((itemObservable: any, index: number) => {
+                if (!isEqualObject(itemObservable, itemList.find((item: any) => isEqualObject(item, itemObservable, excludeFields)), excludeFields)) {
+                    indexToUpdate.push(index)
+                }
+            })
+            indexToUpdate.forEach(index => (observableArray.setItem(index, itemList[index])));
+        }
     }
+
     return {
         sync
     }
 }
 
-export function isEqualObject(a: any, b: any) {
-    return JSON.stringify(a) === JSON.stringify(b);
+export function isEqualObject(a: any, b: any, excludeFields: any) {
+    const aObject = { ...a, ...excludeFields }
+    const bObject = { ...b, ...excludeFields }
+    return JSON.stringify(aObject) === JSON.stringify(bObject);
 }
 
 export function cloneObject(object: any) {
