@@ -1,6 +1,7 @@
 // You can add your native dependencies here
 dependencies {
    implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
+   implementation "com.github.skydoves:colorpickerview:2.3.0"
 }
 
 android {

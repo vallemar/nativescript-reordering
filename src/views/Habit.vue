@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 import { unrefView, useEventListener } from '@nativescript-use/vue';
-import { GridLayout, StackLayout, isAndroid } from '@nativescript/core';
-import { computed, ref } from 'nativescript-vue';
+import { Dialogs, GridLayout, StackLayout, isAndroid } from '@nativescript/core';
+import { computed, ref, $navigateBack } from 'nativescript-vue';
 import Icon from '~/components/Icon.vue';
 import PeriodicityHabit from '~/components/PeriodicityHabit.vue';
 import { animateView } from "@/utils/animation"
 import { useHabitStore } from '~/stores/habitStore';
-import { maxCountDayRange } from '~/mockData';
+import { DAY_DATE_FORMAT, maxCountDayRange } from '~/mockData';
+import { Periodicity } from '~/types';
+import dayjs from 'dayjs';
+import { FlexboxLayout } from '@akylas/nativescript';
 
 const { id } = defineProps({
   id: {
@@ -15,30 +18,41 @@ const { id } = defineProps({
   }
 });
 
-const { get, updateItemWeek } = useHabitStore();
+const { get, getTodayHabitDayIndex, updateOrAddItemWeek, updateItem: updateItemStore, deleteItemById } = useHabitStore();
 const habit = get(id);
 const habitCountRef = ref();
 
 let rotations = 0;
-const dayPositionInArray = habit.week.length - 1;
+const dayPositionInArray = ref(getTodayHabitDayIndex(habit));
 
-const currentDayValue = computed(() => habit.week[dayPositionInArray]);
+const currentDayValue = computed(() => {
+  if (typeof dayPositionInArray.value === "number") {
+    return habit.week[dayPositionInArray.value]?.value
+  } else {
+    return 0
+  }
+});
 
 useEventListener(habitCountRef, {
   loaded: () => applyScale(currentDayValue.value > 0)
 })
 
+function updateItem(value: number) {
+  const habitDay = dayPositionInArray.value ? habit.week[dayPositionInArray.value] : { date: dayjs().format(DAY_DATE_FORMAT), value };
+  updateOrAddItemWeek(id, habitDay, value);
+  dayPositionInArray.value = typeof dayPositionInArray.value === "number" ? dayPositionInArray.value : habit.week.length - 1;
+  applyScale();
+}
+
 function add() {
-  if (habit.week[dayPositionInArray] < maxCountDayRange) {
-    updateItemWeek(id, dayPositionInArray, currentDayValue.value + 1);
-    applyScale();
+  if (dayPositionInArray.value == undefined || habit.week[dayPositionInArray.value].value < maxCountDayRange || (habit.week.length == 0 && currentDayValue.value + 1 <= 5)) {
+    updateItem(currentDayValue.value + 1);
   }
 }
 
 function remove() {
-  if (habit.week[dayPositionInArray] > 0) {
-    updateItemWeek(id, dayPositionInArray, currentDayValue.value - 1);
-    applyScale(false);
+  if (dayPositionInArray.value == undefined || habit.week[dayPositionInArray.value].value > 0 || (habit.week.length == 0 && currentDayValue.value - 1 >= 0)) {
+    updateItem(currentDayValue.value - 1);
   }
 }
 
@@ -57,16 +71,46 @@ function applyScale(plus = true) {
     rotation: rotations * 180
   })
 }
+
+function updatePeriodicity(periodicity: Periodicity) {
+  habit.periodicity = periodicity;
+  updateItemStore(habit);
+}
+
+function removeItem() {
+  Dialogs.confirm({
+    title: 'Confirm delete',
+    message: 'Are you sure about eliminating this habit?',
+    okButtonText: 'Delete',
+    cancelButtonText: 'Cancel',
+  }).then((result) => {
+    if (result) {
+      $navigateBack();
+      deleteItemById(habit.id);
+      setTimeout(() => {
+       
+      }, 500);
+    }
+  })
+}
+
 </script>
 
 <template>
   <Page actionBarHidden="true" androidStatusBarBackground="white">
     <GridLayout rows="auto, *">
       <!-- PERIOCITY HABIT SWITCH -->
-      <StackLayout class="mt-16">
-        <Label verticalAlignment="top" horizontalAlignment="center" :text="habit?.title"
-          class="font-bold text-4xl"></Label>
-        <PeriodicityHabit :id="id"></PeriodicityHabit>
+      <StackLayout>
+        <FlexboxLayout class=" justify-between px-3">
+          <Icon icon="menu"></Icon>
+          <Icon icon="delete" @tap="removeItem()"></Icon>
+        </FlexboxLayout>
+        <StackLayout class="mt-10">
+          <Label verticalAlignment="top" horizontalAlignment="center" :text="habit?.title"
+            class="font-bold text-4xl"></Label>
+          <PeriodicityHabit :habit="habit" @update="updatePeriodicity"></PeriodicityHabit>
+        </StackLayout>
+
       </StackLayout>
 
       <!-- HABIT ANIMATION COUNT -->

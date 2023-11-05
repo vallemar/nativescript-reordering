@@ -1,26 +1,26 @@
 <script lang="ts" setup>
 import { unrefView, useEventListener } from '@nativescript-use/vue';
-import { AbsoluteLayout, GridLayout, Screen, View, isIOS } from '@nativescript/core';
-import { ref } from 'nativescript-vue';
-import { Periodicity } from '~/types';
+import { GridLayout, Screen, View, isIOS } from '@nativescript/core';
+import { PropType, ref } from 'nativescript-vue';
+import { Habit, Periodicity } from '~/types';
 import { animateView } from "@/utils/animation"
-import { useHabitStore } from '~/stores/habitStore';
 
-const { id } = defineProps({
-  id: {
-    type: String,
+const { habit } = defineProps({
+  habit: {
+    type: Object as PropType<Habit>,
     required: true
   }
 });
 
-const { get, updateItem } = useHabitStore();
-const habit = get(id);
+const emit = defineEmits<{
+  (e: 'update', value: Periodicity): void
+}>();
+
 const text = ref(habit.periodicity === Periodicity.Day ? "Every day" : "Every week");
 const periodicityWrapRef = ref();
 const shadowRef = ref();
 const daySwitchRef = ref();
 const weekSwitchRef = ref();
-
 
 useEventListener(habit.periodicity === Periodicity.Day ? daySwitchRef : weekSwitchRef, {
   layoutChanged: (args) => {
@@ -32,7 +32,6 @@ useEventListener(habit.periodicity === Periodicity.Day ? daySwitchRef : weekSwit
       if (habit.periodicity === Periodicity.Week) {
         shadowView.translateX = Screen.mainScreen.widthDIPs;
       }
-
       const location = args.object.getLocationRelativeTo(periodicityWrapView);
       animateView(shadowView, {
         translate: { x: location.x, y: location.y },
@@ -44,8 +43,8 @@ useEventListener(habit.periodicity === Periodicity.Day ? daySwitchRef : weekSwit
 const getTextColor = (periodicity: Periodicity) => habit.periodicity === periodicity ? 'white' : 'black';
 
 function chagePeriodicity(event: { object: View }, periodicity: Periodicity) {
-  habit.periodicity = periodicity;
-  updateItem(habit);
+  emit("update", periodicity);
+
   const shadowView = unrefView<View>(shadowRef);
   const periodicityWrapView = unrefView<GridLayout>(periodicityWrapRef);
   if (shadowView && periodicityWrapView) {

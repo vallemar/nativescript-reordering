@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-
 const props = defineProps({ icon: String })
 </script>
 

@@ -21,3 +21,18 @@ Label {
 Page {
   background-color: white;
 }
+
+.shadow{
+  box-shadow: 0px px 8px 0px rgba(189, 189, 189, 0.75);
+}
+
+
+TextField.uber, Label.uber{
+  font-family: "Uber Move", "UberMoveMedium"; font-weight: 500; 
+}
+.light{
+  font-family: "Uber Move", "UberMove-Light"; font-weight: 300; 
+}
+.bold{
+  font-family: "Uber Move", "UberMoveBold"; font-weight: 700; 
+}

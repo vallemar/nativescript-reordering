@@ -1,13 +1,18 @@
 import { View } from "@nativescript/core";
 
+export type HabitDay = {
+    date: string,
+    value: number,
+}
+
 export type Habit = {
     id: string,
     title: string,
     periodicity: Periodicity,
     color: string,
     icon: string,
-    week: number[],
-    normalizedWeek?: number[],
+    week: HabitDay[],
+    normalizedWeek?: HabitDay[],
     index?: number
 }
 
