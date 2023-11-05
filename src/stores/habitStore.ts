@@ -1,16 +1,15 @@
-import { ObservableArray } from "@nativescript/core";
 import dayjs from "dayjs";
 import { ref } from "nativescript-vue"
 import { defineStore } from "pinia"
-import { DAY_DATE_FORMAT, mockData } from "~/mockData"
+import { DAY_DATE_FORMAT } from "~/mockData"
 import { habitRepository } from "~/repositories/habitRepository";
 import { HabitDay, Habit } from "~/types";
 import { buildNormalizedWeek } from "~/utils";
 
 export const useHabitStore = defineStore('habit', () => {
-    const habits = ref<ObservableArray<Habit>>(new ObservableArray(habitRepository.findAll()));
-    
-    function get(id: string): Habit {
+    const habits = ref<Habit[]>(habitRepository.findAll());
+
+    function findById(id: string): Habit | undefined {
         return habits.value.find(habit => habit.id === id);
     }
 
@@ -20,13 +19,17 @@ export const useHabitStore = defineStore('habit', () => {
 
     function deleteItemById(id: string) {
         habits.value.splice(findIndexById(id), 1)
+        console.log(habits.value.length);
+        habitRepository.saveAll(habits.value);
     }
+
     function findIndexById(id: string) {
         return habits.value.findIndex(habit => habit.id === id);
     }
+
     function updateOrAddItemWeek(id: string, habitDay: HabitDay, value: number) {
         const index = getIndex(id);
-        const habit = habits.value.getItem(index);
+        const habit = habits.value[index];
         const storedHabitDay = findIndexHabitDay(habitDay.date, habit);
         const updatedOrAddDay = storedHabitDay?.habitDay ?? habitDay;
         updatedOrAddDay.value = value;
@@ -36,15 +39,14 @@ export const useHabitStore = defineStore('habit', () => {
             habit.week.push(updatedOrAddDay);
         }
         habit.normalizedWeek = buildNormalizedWeek([habit])[0]?.normalizedWeek;
-        habits.value.setItem(index, habit);
-        habitRepository.saveAll(habits.value.toJSON());
+        habits.value[index] = habit;
+        habitRepository.saveAll(habits.value);
     }
-
 
     function updateItem(habit: Habit) {
         const index = getIndex(habit.id);
-        habits.value.setItem(index, habit);
-        habitRepository.saveAll(habits.value.toJSON());
+        habits.value[index] = habit;
+        habitRepository.saveAll(habits.value);
     }
 
     function addItem(habit: Habit, index?: number) {
@@ -54,18 +56,14 @@ export const useHabitStore = defineStore('habit', () => {
         } else {
             habits.value.push(habit);
         }
-        
-        applyIndex();
-        habitRepository.saveAll(habits.value.toJSON());
-    }
 
-    function applyIndex() {
-        habits.value.forEach((element, i) => (element.index = i));
+        applyIndex();
+        habitRepository.saveAll(habits.value);
     }
 
     function findIndexHabitDay(targetDate: String, habitTarget?: Habit): { habit: Habit, habitDay: HabitDay, index: number } | undefined {
         for (let habitIndex = 0; habitIndex < habits.value.length; habitIndex++) {
-            const habit = habits.value.getItem(habitIndex);
+            const habit = habits.value[habitIndex];
             if (habitTarget && habitTarget?.id != habit.id) {
                 continue;
             }
@@ -82,6 +80,10 @@ export const useHabitStore = defineStore('habit', () => {
         return findIndexHabitDay(dayjs().format(DAY_DATE_FORMAT), habit)?.index;
     }
 
+    function applyIndex() {
+        habits.value.forEach((element, i) => (element.index = i));
+    }
+
     applyIndex();
-    return { habits, get, getIndex, getTodayHabitDayIndex, updateOrAddItemWeek, applyIndex, updateItem, addItem, findIndexHabitDay, findIndexById, deleteItemById }
+    return { habits, findById, getIndex, getTodayHabitDayIndex, updateOrAddItemWeek, applyIndex, updateItem, addItem, findIndexHabitDay, findIndexById, deleteItemById }
 })

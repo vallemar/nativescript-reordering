@@ -48,7 +48,6 @@ const pinia = createPinia()
 habitRepository.removeAll()
 if(habitRepository.findAll().length === 0){
   console.log("ADDING ITEMS TO STORAGE");
-  
   habitRepository.saveAll(buildNormalizedWeek(mockData));
 }
 

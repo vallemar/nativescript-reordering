@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Color, FlexboxLayout, GridLayout, StackLayout, Utils, View, isAndroid } from '@nativescript/core';
+import { Color, FlexboxLayout, GridLayout, StackLayout, View } from '@nativescript/core';
 import { ref } from 'nativescript-vue';
 import { Habit, Periodicity } from '~/types';
 import { getRandomColor } from '~/utils';
@@ -64,7 +64,7 @@ function openEmojiSheet() {
     }
   })
 }
-function selectedIndexChanged(event) {
+function selectedIndexChanged(event: { newIndex: number }) {
   step.value = event.newIndex;
   unrefView<View>(addHabitRef)?.animate({
     height: addHabitHeightSteps[step.value + 1],
@@ -132,7 +132,6 @@ function addHabit() {
               </FlexboxLayout>
             </GridLayout>
           </MDTabContentItem>
-
         </MDTabs>
       </GridLayout>
       <AddHabitSteps @change="change" :index="step" :color="habit.color" :icon="habit.icon" horizontalAlignment="center"

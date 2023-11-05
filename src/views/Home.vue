@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { Color, View } from '@nativescript/core';
-import { ref } from "nativescript-vue";
+import { Color, ObservableArray, View } from '@nativescript/core';
+import { ref, unref } from "nativescript-vue";
 import Icon from '@/components/Icon.vue';
 import Menu from '@/components/Menu.vue';
 import ItemWeek from '@/components/ItemWeek.vue';
@@ -22,25 +22,33 @@ import { StackLayout } from '@akylas/nativescript';
 const collectionViewRef = ref();
 const addHabitStepIndex = ref(0);
 const { habits, applyIndex, findIndexHabitDay, deleteItemById, addItem, findIndexById } = useHabitStore();
-
 const { isPresented: isPresentedMenu, open: openMenu } = usePopover(Menu, {
   horizPos: HorizontalPosition.ALIGN_LEFT
 });
-
-
+const items = new ObservableArray();
 const showDays = getShowDays();
+
+function syncData() {
+  const habitsList = unref(habits);
+  if (habitsList.length !== items.length) {
+    const diference = items.length - habitsList.length
+    items.splice(habitsList.length, diference)
+  }
+  habitsList.forEach((habit: Habit, index: number) => (items.setItem(index, habit)));
+}
+
 
 function onItemReordered(e: any) {
   const view = (e.view as StackLayout);
   view.opacity = 1;
- // view.backgroundColor = new Color("white");
+  // view.backgroundColor = new Color("white");
   applyIndex();
 }
 
 function onItemReorderStarting(e: any) {
   const view = (e.view as View);
   view.opacity = 0.7;
- // view.backgroundColor = new Color("#2020201e");
+  // view.backgroundColor = new Color("#2020201e");
 }
 
 function addHabit() {
@@ -60,16 +68,12 @@ function addHabit() {
 }
 
 const getValueNormalized = (indexDate: number, habit: Habit) => {
-  return habit.normalizedWeek[findIndexHabitDay(showDays[indexDate].date, habit)?.index]?.value ?? 0
+  return (habit?.normalizedWeek && habit?.normalizedWeek[findIndexHabitDay(showDays[indexDate].date, habit)?.index ?? -1]?.value) ?? 0
 }
 
 function removeItem(habit: Habit) {
   const swipeMenu = unrefView<CollectionViewWithSwipeMenu>(collectionViewRef);
   const currentIndex = findIndexById(habit.id);
- /*  swipeMenu?.on("swipeMenuClose", () =>{
-    console.log("CLOSE");
-    
-  }) */
   swipeMenu?.closeCurrentMenu();
   setTimeout(() => {
     deleteItemById(habit.id);
@@ -92,7 +96,7 @@ function removeItem(habit: Habit) {
 
   }, 150);
 }
-function drawerTranslationFunction(side, width, value, delta, progress) {
+function drawerTranslationFunction(side: string, width: number, value: number, delta: number, progress: number) {
   const result = {
     mainContent: {
       translateX: side === 'right' ? -delta : delta
@@ -108,7 +112,7 @@ function drawerTranslationFunction(side, width, value, delta, progress) {
 
 <template>
   <Frame>
-    <Page actionBarHidden="true" androidStatusBarBackground="white">
+    <Page actionBarHidden="true" androidStatusBarBackground="white" @navigatingTo="syncData">
       <RootLayout>
         <GridLayout>
 
@@ -131,16 +135,13 @@ function drawerTranslationFunction(side, width, value, delta, progress) {
               </GridLayout>
             </GridLayout>
 
-
             <!-- ITEM LIST -->
-            <CollectionView ref="collectionViewRef" height="100%" :items="habits" rowHeight="100" reorderEnabled
+            <CollectionView ref="collectionViewRef" height="100%" :items="items" rowHeight="100" reorderEnabled
               @itemReorderStarting="onItemReorderStarting" @itemReordered="onItemReordered"
               :reorderLongPressEnabled="true" :autoReloadItemOnLayout="true">
               <template #default="{ item, index }">
                 <SwipeMenu rightSwipeDistance="500" :translationFunction="drawerTranslationFunction"
                   :startingSide="item.startingSide">
-
-
                   <StackLayout ~mainContent class="mx-2 bg-white"
                     @tap="$navigateTo(HabitDetails, { props: { id: item.id } })" ignoreTouchAnimation="true">
                     <GridLayout paddingLeft="5" columns="68, *, 155" class="rounded-2xl">
@@ -162,12 +163,9 @@ function drawerTranslationFunction(side, width, value, delta, progress) {
                     </GridLayout>
                   </StackLayout>
                   <Stacklayout ~rightDrawer orientation="horizontal" width="100" class="text-center">
-
                     <Icon icon="delete" class="mr-8" @tap="removeItem(item)"></Icon>
                   </Stacklayout>
                 </SwipeMenu>
-
-
               </template>
             </CollectionView>
           </StackLayout>

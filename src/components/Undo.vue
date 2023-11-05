@@ -2,7 +2,6 @@
 import Icon from './Icon.vue';
 
 const emit = defineEmits(["undo"])
-
 </script>
 
 <template>

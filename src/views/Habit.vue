@@ -18,8 +18,8 @@ const { id } = defineProps({
   }
 });
 
-const { get, getTodayHabitDayIndex, updateOrAddItemWeek, updateItem: updateItemStore, deleteItemById } = useHabitStore();
-const habit = get(id);
+const { findById, getTodayHabitDayIndex, updateOrAddItemWeek, updateItem: updateItemStore, deleteItemById } = useHabitStore();
+const habit = findById(id)!;
 const habitCountRef = ref();
 
 let rotations = 0;
@@ -85,11 +85,8 @@ function removeItem() {
     cancelButtonText: 'Cancel',
   }).then((result) => {
     if (result) {
-      $navigateBack();
       deleteItemById(habit.id);
-      setTimeout(() => {
-       
-      }, 500);
+      $navigateBack();
     }
   })
 }
