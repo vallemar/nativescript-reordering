@@ -1,8 +1,7 @@
 import { ObservableArray } from "@nativescript/core";
-import { toRaw, unref } from "nativescript-vue";
+import { toRaw } from "nativescript-vue";
 
 const baseExcludeCompareFields = { startingSide: null, menuOpened: null };
-
 
 export function useSyncObservableArray(array: any[], observableArray: ObservableArray<any>,
     options: {
@@ -12,10 +11,72 @@ export function useSyncObservableArray(array: any[], observableArray: Observable
         checkUpdate?: boolean,
         excludeCompareFields?: any
     } = {}) {
-    const { checkRemoved = true, checkAdded = true, checkUpdate = true, checkPosition = true, excludeCompareFields, addRemoveByField = null } = options;
+    const { checkRemoved = true, checkAdded = true, checkUpdate = true, excludeCompareFields, addRemoveByField = null } = options;
     const excludeFields = { ...baseExcludeCompareFields, ...excludeCompareFields };
 
     function sync(newArray: any) {
+        console.time("label");
+        const itemList = newArray ? cloneObject(newArray) : cloneObject(array);
+        console.log(itemList.length)
+
+        if (checkRemoved) {
+            const removedItems: any[] = [];
+            observableArray.forEach((itemObservable: any) => {
+                const findItem = addRemoveByField ?
+                    itemList.find((item: any) => item[addRemoveByField] === itemObservable[addRemoveByField]) :
+                    itemList.find((item: any) => isEqualObject(item, itemObservable, excludeFields));
+
+                if (!findItem) {
+                    removedItems.push(itemObservable);
+                }
+            });
+
+            removedItems.forEach(item => observableArray.splice(observableArray.indexOf(item), 1));
+        }
+
+        if (checkAdded) {
+            const addedItems: any[] = [];
+            itemList.forEach((item: any) => {
+                const findItem = addRemoveByField ?
+                    observableArray.find((itemObservable: any) => itemObservable[addRemoveByField] === item[addRemoveByField]) :
+                    observableArray.find((itemObservable: any) => isEqualObject(itemObservable, item, excludeFields));
+
+                if (!findItem) {
+                    addedItems.push(item);
+                }
+            });
+
+            addedItems.forEach(item => observableArray.push(item));
+        }
+
+        if (checkUpdate) {
+            itemList.forEach((item: any, index: number) => {
+                const itemObservable = observableArray.getItem(index);
+                if (!isEqualObject(itemObservable, item, excludeFields)) {
+                    observableArray.setItem(index, item);
+                }
+            });
+        }
+        console.timeEnd("label");
+    }
+
+    return {
+        sync
+    }
+}
+
+export function isEqualObject(a: any, b: any, excludeFields: any) {
+    const aObject = { ...a, ...excludeFields }
+    const bObject = { ...b, ...excludeFields }
+    return JSON.stringify(aObject) === JSON.stringify(bObject);
+}
+
+export function cloneObject(object: any) {
+    return JSON.parse(JSON.stringify(toRaw(object)));
+}
+
+/* 
+  function sync(newArray: any) {
         const itemList = newArray ? cloneObject(newArray) : cloneObject(array);
 
         if (checkRemoved) {
@@ -59,19 +120,4 @@ export function useSyncObservableArray(array: any[], observableArray: Observable
             })
             indexToUpdate.forEach(index => (observableArray.setItem(index, itemList[index])));
         }
-    }
-
-    return {
-        sync
-    }
-}
-
-export function isEqualObject(a: any, b: any, excludeFields: any) {
-    const aObject = { ...a, ...excludeFields }
-    const bObject = { ...b, ...excludeFields }
-    return JSON.stringify(aObject) === JSON.stringify(bObject);
-}
-
-export function cloneObject(object: any) {
-    return JSON.parse(JSON.stringify(toRaw(object)));
-}
+}*/

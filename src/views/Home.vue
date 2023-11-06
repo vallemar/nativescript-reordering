@@ -59,6 +59,7 @@ function addHabit() {
     },
     on: {
       finish: () => {
+        syncData();
         close();
       }
     },
@@ -121,7 +122,6 @@ function drawerTranslationFunction(side: string, width: number, value: number, d
     <Page actionBarHidden="true" androidStatusBarBackground="white" @navigatingTo="syncData">
       <RootLayout>
         <GridLayout>
-
           <StackLayout>
             <!-- HEADER -->
             <FlexboxLayout class="justify-between mx-2">
