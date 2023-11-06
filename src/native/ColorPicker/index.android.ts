@@ -10,21 +10,23 @@ export class ColorPicker {
 
     open(color: Color) {
         try {
+            const self = this;
             const builder = new com.skydoves.colorpickerview.ColorPickerDialog.Builder(Utils.android.getCurrentActivity())
                 .setTitle("ColorPicker Dialog")
                 .setPreferenceName("MyColorPickerDialog")
-                //.setInitialColor(new Color("blue").android)
-
                 .setPositiveButton("OK",
                     new com.skydoves.colorpickerview.listeners.ColorEnvelopeListener({
-                        onColorSelected(colorEnvelope: com.skydoves.colorpickerview.ColorEnvelope, fromUser boolean) {
-                            console.log(colorEnvelope.getColor())
-                            console.log("#" + colorEnvelope.getHexCode())
-                            console.log("#" + java.lang.Integer.toHexString(colorEnvelope.getColor()).substring(2))
-                            console.log("#" + java.lang.Integer.toHexString(colorEnvelope.getColor()))
-                            //   if (onChangeColor)
-                            //   onChangeColor(new Color("#" + java.lang.Integer.toHexString(colorEnvelope.getColor()).substring(2));
-                        }))
+                        onColorSelected(colorEnvelope: com.skydoves.colorpickerview.ColorEnvelope, fromUser: boolean) {
+                            if (self.onChangeColor) {
+                                const color = java.lang.Integer.parseInt(colorEnvelope.getHexCode(), 16);
+                                const red = (color >> 16) & 0xFF;
+                                const green = (color >> 8) & 0xFF;
+                                const blue = (color) & 0xFF;
+                                const alpha = (color >> 24) & 0xFF;
+                                self.onChangeColor(new Color(alpha, red, green, blue, "rgb"));
+                            }
+                        }
+                    }))
                 .setNegativeButton("Cancel",
                     new android.content.DialogInterface.OnClickListener({
                         onClick(dialogInterface, i) {

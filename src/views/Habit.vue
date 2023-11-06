@@ -9,7 +9,6 @@ import { useHabitStore } from '~/stores/habitStore';
 import { DAY_DATE_FORMAT, maxCountDayRange } from '~/mockData';
 import { Periodicity } from '~/types';
 import dayjs from 'dayjs';
-import { FlexboxLayout } from '@akylas/nativescript';
 
 const { id } = defineProps({
   id: {

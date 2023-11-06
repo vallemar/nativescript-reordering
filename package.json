@@ -7,7 +7,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@akylas/nativescript": "^8.5.10",
+    "@nativescript/core": "^8.6.1",
     "@nativescript-community/ui-collectionview": "^5.3.3",
     "@nativescript-community/ui-collectionview-swipemenu": "^5.3.3",
     "@nativescript-community/ui-lottie": "^5.0.6",
@@ -24,7 +24,6 @@
   },
   "devDependencies": {
     "@nativescript/android": "8.6.2",
-    "@nativescript/core": "^8.6.1",
     "@nativescript/ios": "8.6.1",
     "@nativescript/preview-cli": "1.0.5",
     "@nativescript/tailwind": "^2.0.1",

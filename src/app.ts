@@ -21,6 +21,7 @@ registerElement('BottomSheet', () => require('@nativescript-community/ui-persist
     event: 'stepIndexChange',
   },
   overwriteExisting: true,
+  // @ts-ignore
   nodeOps: {
     insert(child, parent) {
       if (child.nativeView['~bottomSheet'] === '') {

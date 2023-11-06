@@ -14,7 +14,7 @@ export const mockData: Habit[] = [
 
 export const maxCountDayRange = 5;
 
-export const addHabitHeightSteps = [0, 230, 240, 270, 250, 250];
+export const addHabitHeightSteps = [0, 260, 260, 260, 260, 260];
 export const DAY_DATE_FORMAT = 'YYYY-MM-DD';
 
 export const SHEET_CURVE = CoreTypes.AnimationCurve.cubicBezier(

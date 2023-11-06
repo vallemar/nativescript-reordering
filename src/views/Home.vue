@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ObservableArray, View } from '@nativescript/core';
+import { ObservableArray, StackLayout, View } from '@nativescript/core';
 import { ref } from "nativescript-vue";
 import Icon from '@/components/Icon.vue';
 import Menu from '@/components/Menu.vue';
@@ -15,23 +15,25 @@ import type { CollectionViewWithSwipeMenu } from '@nativescript-community/ui-col
 import AddHabit from '~/components/AddHabit.vue';
 import { ANIMATION, SHADE_COVER } from '~/mockData';
 import { unrefView, useRootLayout } from '@nativescript-use/vue';
-import { cloneObject, getShowDays, isEqualObject } from '@/utils';
+import { cloneObject, getShowDays } from '@/utils';
 import Undo from '~/components/Undo.vue';
-import { StackLayout } from '@akylas/nativescript';
 import { useSyncObservableArray } from '~/useSyncObservableArray';
 import { storeToRefs } from 'pinia';
+import { collectionViewUtils } from '~/utils/collectionViewUtils';
 
 const collectionViewRef = ref();
 const addHabitStepIndex = ref(0);
 const habitStore = useHabitStore();
 const { habits: habitRef } = storeToRefs(habitStore);
 const { clone, findIndexHabitDay, deleteItemById, addItem, findIndexById } = habitStore;
+const { sync, observableArray: items } = useSyncObservableArray(
+  habitRef.value as any,
+  new ObservableArray(cloneObject(habitRef.value)),
+  { addRemoveByField: "id" }
+);
 const { isPresented: isPresentedMenu, open: openMenu } = usePopover(Menu, {
   horizPos: HorizontalPosition.ALIGN_LEFT
 });
-
-const items = new ObservableArray(cloneObject(habitRef.value));
-const { sync } = useSyncObservableArray(habitRef.value as any, items, { addRemoveByField: "id" });
 const showDays = getShowDays();
 
 function syncData() {
@@ -98,23 +100,10 @@ function removeItem(habit: Habit) {
       },
       closeTimerMillis: 4000
     })
-    setTimeout(() => {
-      show();
-    }, 300);
+    show();
   }, 200);
 }
-function drawerTranslationFunction(side: string, width: number, value: number, delta: number, progress: number) {
-  const result = {
-    mainContent: {
-      translateX: side === 'right' ? -delta : delta
-    },
-    backDrop: {
-      translateX: side === 'right' ? -delta : delta,
-      opacity: progress * 0.00001
-    }
-  } as any;
-  return result;
-}
+
 </script>
 
 <template>
@@ -146,7 +135,7 @@ function drawerTranslationFunction(side: string, width: number, value: number, d
               @itemReorderStarting="onItemReorderStarting" @itemReordered="onItemReordered"
               :reorderLongPressEnabled="true" :autoReloadItemOnLayout="true">
               <template #default="{ item, index }">
-                <SwipeMenu rightSwipeDistance="500" :translationFunction="drawerTranslationFunction"
+                <SwipeMenu rightSwipeDistance="500" :translationFunction="collectionViewUtils.drawerTranslationFunction"
                   :startingSide="item.startingSide">
                   <StackLayout ~mainContent class="mx-2 bg-white"
                     @tap="$navigateTo(HabitDetails, { props: { id: item.id } })" ignoreTouchAnimation="true">

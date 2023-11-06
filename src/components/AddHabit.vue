@@ -88,7 +88,7 @@ function addHabit() {
 
 <template>
   <StackLayout top="0" verticalAlignment="bottom" originY="1" class="w-full">
-    <GridLayout class="w-full bg-white shadow ios:rounded-3xl android:rounded-t-3xl pt-1" height="230" translateY="200"
+    <GridLayout class="w-full bg-white shadow ios:rounded-3xl android:rounded-t-3xl pt-1" height="260" translateY="200"
       ref="addHabitRef">
       <GridLayout height="200" class="mt-4" verticalAlignment="top">
         <MDTabs @selectedIndexChanged="selectedIndexChanged" horizontalAlignment="left" verticalAlignment="top"
