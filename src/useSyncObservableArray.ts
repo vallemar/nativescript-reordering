@@ -15,6 +15,69 @@ export function useSyncObservableArray(array: any[], observableArray: Observable
     const excludeFields = { ...baseExcludeCompareFields, ...excludeCompareFields };
 
     function sync(newArray: any) {
+        const itemList = newArray ? cloneObject(newArray) : cloneObject(array);
+
+        if (checkRemoved) {
+            const indexRemoved: number[] = [];
+            observableArray.forEach((itemObservable: any, index: number) => {
+                if (addRemoveByField) {
+                    if (!itemList.find((item: any) => item[addRemoveByField] === itemObservable[addRemoveByField])) {
+                        indexRemoved.push(index);
+                    }
+                } else {
+                    if (!itemList.find((item: any) => isEqualObject(item, itemObservable, excludeFields))) {
+                        indexRemoved.push(index);
+                    }
+                }
+            })
+            indexRemoved.forEach(index => observableArray.splice(index, 1))
+        }
+
+        if (checkAdded) {
+            const indexAdd: number[] = [];
+            itemList.forEach((item: any, index: number) => {
+                if (addRemoveByField) {
+                    if (!observableArray.find((itemObservable: any) => itemObservable[addRemoveByField] === item[addRemoveByField])) {
+                        indexAdd.push(index);
+                    }
+                } else {
+                    if (!observableArray.find((itemObservable: any) => isEqualObject(itemObservable, item, excludeFields))) {
+                        indexAdd.push(index);
+                    }
+                }
+            })
+            indexAdd.forEach(index => (observableArray.splice(index, 0, itemList[index])));
+        }
+
+        if (checkUpdate) {
+            const indexToUpdate: number[] = [];
+            observableArray.forEach((itemObservable: any, index: number) => {
+                if (!isEqualObject(itemObservable, itemList.find((item: any) => isEqualObject(item, itemObservable, excludeFields)), excludeFields)) {
+                    indexToUpdate.push(index)
+                }
+            })
+            indexToUpdate.forEach(index => (observableArray.setItem(index, itemList[index])));
+        }
+    }
+
+    return {
+        sync
+    }
+}
+
+export function isEqualObject(a: any, b: any, excludeFields: any) {
+    const aObject = { ...a, ...excludeFields }
+    const bObject = { ...b, ...excludeFields }
+    return JSON.stringify(aObject) === JSON.stringify(bObject);
+}
+
+export function cloneObject(object: any) {
+    return JSON.parse(JSON.stringify(toRaw(object)));
+}
+
+/* 
+Best performance
+ function sync(newArray: any) {
         console.time("label");
         const itemList = newArray ? cloneObject(newArray) : cloneObject(array);
         console.log(itemList.length)
@@ -59,21 +122,7 @@ export function useSyncObservableArray(array: any[], observableArray: Observable
         }
         console.timeEnd("label");
     }
-
-    return {
-        sync
-    }
-}
-
-export function isEqualObject(a: any, b: any, excludeFields: any) {
-    const aObject = { ...a, ...excludeFields }
-    const bObject = { ...b, ...excludeFields }
-    return JSON.stringify(aObject) === JSON.stringify(bObject);
-}
-
-export function cloneObject(object: any) {
-    return JSON.parse(JSON.stringify(toRaw(object)));
-}
+ */
 
 /* 
   function sync(newArray: any) {
