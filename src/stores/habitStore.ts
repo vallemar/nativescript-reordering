@@ -1,10 +1,9 @@
-import dayjs from "dayjs";
 import { ref } from "nativescript-vue"
 import { defineStore } from "pinia"
-import { DAY_DATE_FORMAT } from "~/mockData"
 import { habitRepository } from "~/repositories/habitRepository";
 import { HabitDay, Habit } from "~/types";
-import { buildNormalizedWeek } from "~/utils";
+import { habitUtils } from "~/utils/habitUtils";
+import { getTodayDayFormat } from "~/utils/dateUtils";
 
 export const useHabitStore = defineStore('habit', () => {
     const habits = ref<Habit[]>(habitRepository.findAll());
@@ -37,7 +36,7 @@ export const useHabitStore = defineStore('habit', () => {
         } else {
             habit.week.push(updatedOrAddDay);
         }
-        habit.normalizedWeek = buildNormalizedWeek([habit])[0]?.normalizedWeek;
+        habit.normalizedWeek = habitUtils.buildNormalizedWeek([habit])[0]?.normalizedWeek;
         habits.value[index] = habit;
         habitRepository.saveAll(habits.value);
     }
@@ -49,7 +48,7 @@ export const useHabitStore = defineStore('habit', () => {
     }
 
     function addItem(habit: Habit, index?: number) {
-        habit.normalizedWeek = buildNormalizedWeek([habit])[0]?.normalizedWeek;
+        habit.normalizedWeek = habitUtils.buildNormalizedWeek([habit])[0]?.normalizedWeek;
         if (typeof index === "number") {
             habits.value.splice(index, 0, habit);
         } else {
@@ -75,7 +74,7 @@ export const useHabitStore = defineStore('habit', () => {
     }
 
     function getTodayHabitDayIndex(habit: Habit) {
-        return findIndexHabitDay(dayjs().format(DAY_DATE_FORMAT), habit)?.index;
+        return findIndexHabitDay(getTodayDayFormat(), habit)?.index;
     }
 
     function clone(listToCloneIndex: Habit[]) {

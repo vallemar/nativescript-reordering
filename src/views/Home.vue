@@ -7,26 +7,27 @@ import ItemWeek from '@/components/ItemWeek.vue';
 import Overlay from '@/components/Overlay.vue';
 import HabitDetails from '@/views/Habit.vue';
 import { useHabitStore } from '@/stores/habitStore';
-import { usePopover } from '~/usePopover';
+import { usePopover } from '@/composables/usePopover';
 import { HorizontalPosition } from "@nativescript-community/ui-popover"
 import { Habit, Periodicity } from '~/types';
 import type { CollectionView } from '@nativescript-community/ui-collectionview';
 import type { CollectionViewWithSwipeMenu } from '@nativescript-community/ui-collectionview-swipemenu';
 import AddHabit from '~/components/AddHabit.vue';
-import { ANIMATION, SHADE_COVER } from '~/mockData';
+import { ANIMATION, SHADE_COVER } from '@/utils/rootLayoutUtils';
 import { unrefView, useRootLayout } from '@nativescript-use/vue';
-import { cloneObject, getShowDays } from '@/utils';
+import { cloneObject } from '@/utils';
 import Undo from '~/components/Undo.vue';
-import { useSyncObservableArray } from '~/useSyncObservableArray';
+import { useSyncObservableArray } from '@/composables/useSyncObservableArray';
 import { storeToRefs } from 'pinia';
 import { collectionViewUtils } from '~/utils/collectionViewUtils';
+import { getShowDays } from '~/utils/dateUtils';
 
 const collectionViewRef = ref();
 const addHabitStepIndex = ref(0);
 const habitStore = useHabitStore();
 const { habits: habitRef } = storeToRefs(habitStore);
 const { clone, findIndexHabitDay, deleteItemById, addItem, findIndexById } = habitStore;
-const { sync, observableArray: items } = useSyncObservableArray(
+const { sync: syncObservableArray, observableArray: items } = useSyncObservableArray(
   habitRef.value as any,
   new ObservableArray(cloneObject(habitRef.value)),
   { addRemoveByField: "id" }
@@ -37,7 +38,7 @@ const { isPresented: isPresentedMenu, open: openMenu } = usePopover(Menu, {
 const showDays = getShowDays();
 
 function syncData() {
-  sync(habitRef.value as any)
+  syncObservableArray();
 }
 
 function onItemReordered(e: any) {
@@ -122,11 +123,11 @@ function removeItem(habit: Habit) {
             <GridLayout columns="*,  155" height="70" class="mx-2">
               <Label text="Habits" class="font-bold text-2xl"></Label>
               <GridLayout paddingRight="5" col="2" horizontalAlignment="right" columns="30,30,30,30,30">
-                <Label class="text-gray-400 text-right" :text="showDays[4].dayName"></Label>
-                <Label col="1" class="text-gray-400 text-right" :text="showDays[3].dayName"></Label>
-                <Label col="2" class="text-gray-400 text-right" :text="showDays[2].dayName"></Label>
-                <Label col="3" class="text-gray-400 text-right" :text="showDays[1].dayName"></Label>
-                <Label col="4" class="text-gray-400 text-right" :text="showDays[0].dayName"></Label>
+                <Label class="text-gray-400 text-right" :text="showDays[4].dayWeekName"></Label>
+                <Label col="1" class="text-gray-400 text-right" :text="showDays[3].dayWeekName"></Label>
+                <Label col="2" class="text-gray-400 text-right" :text="showDays[2].dayWeekName"></Label>
+                <Label col="3" class="text-gray-400 text-right" :text="showDays[1].dayWeekName"></Label>
+                <Label col="4" class="text-gray-400 text-right" :text="showDays[0].dayWeekName"></Label>
               </GridLayout>
             </GridLayout>
 
@@ -177,3 +178,4 @@ function removeItem(habit: Habit) {
 
   </Frame>
 </template>
+~/views/mockData~/composables/usePopover~/composables/useSyncObservableArray

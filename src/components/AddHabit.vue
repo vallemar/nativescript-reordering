@@ -10,9 +10,10 @@ import { ColorPicker } from "@/native/ColorPicker"
 import { unrefView, useEventListener } from '@nativescript-use/vue';
 import Emoji from './Emoji.vue';
 import { useBottomSheet } from '@nativescript-community/ui-material-bottomsheet/vue3';
-import { DAY_DATE_FORMAT, addHabitHeightSteps } from '~/mockData';
+import { addHabitHeightSteps } from '@/utils/mockData';
 import { useHabitStore } from '~/stores/habitStore';
 import dayjs from 'dayjs';
+import { getTodayDayFormat } from '~/utils/dateUtils';
 
 const emit = defineEmits(["finish"]);
 const addHabitRef = ref();
@@ -26,7 +27,7 @@ const habit = ref<Habit>({
   periodicity: Periodicity.Day,
   color: getRandomColor(),
   icon: "🚀",
-  week: [{ date: dayjs().format(DAY_DATE_FORMAT), value: 1 }],
+  week: [{ date: getTodayDayFormat(), value: 1 }],
 })
 const colorPicker = new ColorPicker((color: Color) => {
   habit.value.color = color.hex
@@ -139,3 +140,4 @@ function addHabit() {
     </GridLayout>
   </StackLayout>
 </template>
+~/views/mockData

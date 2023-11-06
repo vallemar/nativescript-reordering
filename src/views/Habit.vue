@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { unrefView, useEventListener } from '@nativescript-use/vue';
-import { Dialogs, GridLayout, StackLayout, isAndroid } from '@nativescript/core';
+import { Dialogs, StackLayout, isAndroid } from '@nativescript/core';
 import { computed, ref, $navigateBack } from 'nativescript-vue';
 import Icon from '~/components/Icon.vue';
 import PeriodicityHabit from '~/components/PeriodicityHabit.vue';
 import { animateView } from "@/utils/animation"
 import { useHabitStore } from '~/stores/habitStore';
-import { DAY_DATE_FORMAT, maxCountDayRange } from '~/mockData';
+import { maxCountDayRange } from '@/utils/mockData';
 import { Periodicity } from '~/types';
-import dayjs from 'dayjs';
+import { getTodayDayFormat } from '~/utils/dateUtils';
 
 const { id } = defineProps({
   id: {
@@ -37,7 +37,7 @@ useEventListener(habitCountRef, {
 })
 
 function updateItem(value: number) {
-  const habitDay = dayPositionInArray.value ? habit.week[dayPositionInArray.value] : { date: dayjs().format(DAY_DATE_FORMAT), value };
+  const habitDay = dayPositionInArray.value ? habit.week[dayPositionInArray.value] : { date: getTodayDayFormat(), value };
   updateOrAddItemWeek(id, habitDay, value);
   dayPositionInArray.value = typeof dayPositionInArray.value === "number" ? dayPositionInArray.value : habit.week.length - 1;
   applyScale();
@@ -135,3 +135,4 @@ function removeItem() {
     </GridLayout>
   </Page>
 </template>
+~/views/mockData
