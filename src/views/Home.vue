@@ -27,7 +27,7 @@ const addHabitStepIndex = ref(0);
 const habitStore = useHabitStore();
 const { habits: habitRef } = storeToRefs(habitStore);
 const { clone, findIndexHabitDay, deleteItemById, addItem, findIndexById } = habitStore;
-const { sync: syncObservableArray, observableArray: items } = useSyncObservableArray(
+const { sync: syncObservableArray, observableArray: items } = useSyncObservableArray<Habit>(
   habitRef.value as any,
   new ObservableArray(cloneObject(habitRef.value)),
   { addRemoveByField: "id" }

@@ -3,7 +3,7 @@ import { toRaw, watch, isReactive, isRef } from "nativescript-vue";
 
 const baseExcludeCompareFields = { startingSide: null, menuOpened: null };
 
-export function useSyncObservableArray<T>(array: T[], observableArray: ObservableArray<T>,
+export function useSyncObservableArray<T>(arrayRef: T[], observableArray: ObservableArray<T>,
     options: {
         addRemoveByField?: string,
         excludeCompareFields?: any,
@@ -15,15 +15,15 @@ export function useSyncObservableArray<T>(array: T[], observableArray: Observabl
     const { checkRemoved = true, checkAdded = true, checkUpdate = true, excludeCompareFields, addRemoveByField = null } = options;
     const excludeFields = { ...baseExcludeCompareFields, ...excludeCompareFields };
 
-    if (options?.watchUpdates && (isReactive(array) || isRef(array))) {
-        watch(array, () => {
+    if (options?.watchUpdates && (isReactive(arrayRef) || isRef(arrayRef))) {
+        watch(arrayRef, () => {
             sync();
         })
     }
 
     function sync(newArray?: any) {
         //console.time("TIME_[useSyncObservableArray]");
-        const itemList = newArray ? cloneObject(array) : cloneObject(array);
+        const itemList = newArray ? cloneObject(newArray) : cloneObject(arrayRef);
 
         if (checkRemoved) {
             const indexRemoved: number[] = [];
