@@ -11,8 +11,25 @@ import { mockData } from './utils/mockData';
 import SwipeMenuPlugin from '@nativescript-community/ui-collectionview-swipemenu/vue3';
 import { BottomSheetPlugin } from '@nativescript-community/ui-material-bottomsheet/vue3';
 import { install as installBottomSheet } from "@nativescript-community/ui-material-bottomsheet";
+import '@formatjs/intl-getcanonicallocales/polyfill';
+import '@formatjs/intl-locale/polyfill';
+import '@formatjs/intl-pluralrules/polyfill';
+import "@formatjs/intl-numberformat/polyfill";
+
+// Locale data for en
+import "@formatjs/intl-pluralrules/locale-data/en";
+import "@formatjs/intl-numberformat/locale-data/en";
+(global as any).window = {
+  // @ts-ignore
+  requestAnimationFrame(callback: any) {
+    return global.requestAnimationFrame(callback);
+  }
+};
+registerElement("Canvas", () => require("@nativescript/canvas").Canvas)
+
 
 installBottomSheet();
+
 registerElement('BottomSheet', () => require('@nativescript-community/ui-persistent-bottomsheet').PersistentBottomSheet, {
   model: {
     prop: 'stepIndex',
@@ -42,7 +59,7 @@ TouchManager.animations = {
     curve: CoreTypes.AnimationCurve.easeInOut,
   },
 }
-
+habitRepository.removeAll();
 if (habitRepository.findAll().length === 0) {
   console.log("ADDING ITEMS TO STORAGE");
   habitRepository.saveAll(habitUtils.buildNormalizedWeek(mockData));

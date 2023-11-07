@@ -7,7 +7,10 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@nativescript/core": "^8.6.1",
+    "@formatjs/intl-getcanonicallocales": "^2.3.0",
+    "@formatjs/intl-locale": "^3.4.1",
+    "@formatjs/intl-numberformat": "^8.8.1",
+    "@formatjs/intl-pluralrules": "^5.2.8",
     "@nativescript-community/ui-collectionview": "^5.3.3",
     "@nativescript-community/ui-collectionview-swipemenu": "^5.3.3",
     "@nativescript-community/ui-lottie": "^5.0.6",
@@ -16,7 +19,10 @@
     "@nativescript-community/ui-persistent-bottomsheet": "^0.0.29",
     "@nativescript-community/ui-popover": "^0.1.9",
     "@nativescript-use/vue": "^0.0.26",
+    "@nativescript/canvas": "2.0.0-alpha.29",
+    "@nativescript/core": "^8.6.1",
     "@nativescript/stackblitz": "^0.0.8",
+    "chart.js": "^4.4.0",
     "dayjs": "^1.11.10",
     "nativescript-vue": "3.0.0-beta.10",
     "patch-package": "^8.0.0",
@@ -24,7 +30,7 @@
   },
   "devDependencies": {
     "@nativescript/android": "8.6.2",
-    "@nativescript/ios": "8.6.1",
+    "@nativescript/ios": "^8.6.2",
     "@nativescript/preview-cli": "1.0.5",
     "@nativescript/tailwind": "^2.0.1",
     "@nativescript/types": "~8.5.0",

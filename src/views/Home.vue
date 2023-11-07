@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { ObservableArray, StackLayout, View } from '@nativescript/core';
-import { ref } from "nativescript-vue";
+import {ObservableArray, StackLayout, View} from '@nativescript/core';
+import {ref } from "nativescript-vue";
 import Icon from '@/components/Icon.vue';
 import Menu from '@/components/Menu.vue';
 import ItemWeek from '@/components/ItemWeek.vue';
@@ -21,6 +21,8 @@ import { useSyncObservableArray } from '@/composables/useSyncObservableArray';
 import { storeToRefs } from 'pinia';
 import { collectionViewUtils } from '~/utils/collectionViewUtils';
 import { getShowDays } from '~/utils/dateUtils';
+import {printWeekLine} from "~/utils/charts";
+import {Canvas} from "@nativescript/canvas";
 
 const collectionViewRef = ref();
 const addHabitStepIndex = ref(0);
@@ -105,6 +107,9 @@ function removeItem(habit: Habit) {
   }, 200);
 }
 
+function onChartReady(args: {object: Canvas}) {
+  printWeekLine(args.object.getContext("2d"), habitRef.value, findIndexHabitDay);
+}
 </script>
 
 <template>
@@ -119,6 +124,14 @@ function removeItem(habit: Habit) {
               <Icon icon="add" @tap="addHabit"></Icon>
             </FlexboxLayout>
 
+            <StackLayout class="p-3 text-center">
+
+
+            <StackLayout class="rounded-2xl shadow items-center" height="170">
+              <Canvas id="canvas" width="100%" height="170"  @ready="onChartReady"/>
+
+            </StackLayout>
+            </StackLayout>
             <!-- HEADER weekdays -->
             <GridLayout columns="*,  155" height="70" class="mx-2">
               <Label text="Habits" class="font-bold text-2xl"></Label>
@@ -168,7 +181,7 @@ function removeItem(habit: Habit) {
           <Overlay :show="isPresentedMenu"></Overlay>
           <!--      <AddHabit horizontalAlignment="left" verticalAlignment="bottom"></AddHabit> -->
           <!--      <AddHabit horizontalAlignment="left" verticalAlignment="bottom"></AddHabit> -->
-          <!--   <BottomSheet  v-model="addHabitStepIndex" :gestureEnabled="false" height="100%" width="100%" horizontalAlignment="left" verticalAlignment="bottom" 
+          <!--   <BottomSheet  v-model="addHabitStepIndex" :gestureEnabled="false" height="100%" width="100%" horizontalAlignment="left" verticalAlignment="bottom"
           :steps="addHabitHeightSteps">
                  <AddHabit @next="addHabitNext" @back="addHabitBack" ~bottomSheet></AddHabit>
         </BottomSheet> -->
@@ -178,4 +191,3 @@ function removeItem(habit: Habit) {
 
   </Frame>
 </template>
-~/views/mockData~/composables/usePopover~/composables/useSyncObservableArray
