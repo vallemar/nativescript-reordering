@@ -6,14 +6,14 @@ const baseExcludeCompareFields = { startingSide: null, menuOpened: null };
 export function useSyncObservableArray<T>(arrayRef: T[], observableArray: ObservableArray<T>,
     options: {
         addRemoveByField?: string,
-        excludeCompareFields?: any,
+        excludeCompareFields?: string[],
         watchUpdates?: boolean,
         checkRemoved?: boolean,
         checkAdded?: boolean,
         checkUpdate?: boolean,
     } = {}) {
-    const { checkRemoved = true, checkAdded = true, checkUpdate = true, excludeCompareFields, addRemoveByField = null } = options;
-    const excludeFields = { ...baseExcludeCompareFields, ...excludeCompareFields };
+    const { checkRemoved = true, checkAdded = true, checkUpdate = true, excludeCompareFields = undefined, addRemoveByField = null } = options;
+    const excludeFields = { ...baseExcludeCompareFields, ...excludeCompareFields?.reduce((a: any, b) => { a[b] = null; return a }, {}) };
 
     if (options?.watchUpdates && (isReactive(arrayRef) || isRef(arrayRef))) {
         watch(arrayRef, () => {
@@ -22,8 +22,9 @@ export function useSyncObservableArray<T>(arrayRef: T[], observableArray: Observ
     }
 
     function sync(newArray?: any) {
-        //console.time("TIME_[useSyncObservableArray]");
+        console.time("TIME_[useSyncObservableArray]");
         const itemList = newArray ? cloneObject(newArray) : cloneObject(arrayRef);
+        console.log(itemList.length)
 
         if (checkRemoved) {
             const indexRemoved: number[] = [];
@@ -59,7 +60,7 @@ export function useSyncObservableArray<T>(arrayRef: T[], observableArray: Observ
                 }
             });
         }
-        //console.timeEnd("TIME_[useSyncObservableArray]");
+        console.timeEnd("TIME_[useSyncObservableArray]");
     }
 
     return {

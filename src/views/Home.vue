@@ -36,9 +36,13 @@ const { isPresented: isPresentedMenu, open: openMenu } = usePopover(Menu, {
   horizPos: HorizontalPosition.ALIGN_LEFT
 });
 const showDays = getShowDays();
+let isFirstNavigation = true;
 
 function syncData() {
-  syncObservableArray();
+  if(!isFirstNavigation){
+    syncObservableArray();
+  }
+  isFirstNavigation = false;
 }
 
 function onItemReordered(e: any) {
