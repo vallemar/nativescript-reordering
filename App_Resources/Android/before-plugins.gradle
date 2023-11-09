@@ -1,5 +1,6 @@
 // this configurations is loaded before building plugins, as well as before building
 // the app - this is where you can apply global settings and overrides
+apply from: new File(["node", "--print", "require.resolve('@open-native/core/package.json')"].execute(null, rootDir).text.trim(), "../scripts/open-native.gradle");
 
 project.ext {
   // androidXAppCompat = "1.4.1"

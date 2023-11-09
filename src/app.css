@@ -14,14 +14,39 @@
   font-size: 34;
 }
 
+.ns-root, .ns-modal {
+  /* Definition */
+  --bg-light: #FFFFFF;
+  --bg-dark: #1C2128;
+  --bg-secondary-light: #f5f5f5e5;
+  --bg-secondary-dark: #21272f;
+  --text-light: #1C2128;
+  --text-dark: white;
+
+  /* Default | light mode */
+  --bg: var(--bg-light);
+  --bg-secondary: var(--bg-secondary-light);
+  --text: var(--text-light);
+}
+
+.ns-root.ns-dark,  .ns-modal.ns-dark  {
+  --bg: var(--bg-dark);
+  --bg-secondary: var(--bg-secondary-dark);
+  --text: var(--text-dark);
+}
+
 Label {
-  color: black;
+  color: var(--text);
 }
 
-Page {
-  background-color: white;
+
+Page, .bg {
+  background-color: var(--bg);
 }
 
+.bg-secondary {
+  background-color: var(--bg-secondary);
+}
 .shadow{
   box-shadow: 0px px 8px 0px rgba(189, 189, 189, 0.75);
 }

@@ -42,3 +42,9 @@ export type AnimateOptions = {
     onBeforeStartAnimation?: (view: View) => void
     onCompletion?: (view: View) => void
 }
+
+export type Palette = {
+    bg: string,
+    bgSecondary: string,
+    textColor: string,
+}

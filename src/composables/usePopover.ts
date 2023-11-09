@@ -1,11 +1,15 @@
 import { showPopover, PopoverOptions } from "@nativescript-community/ui-popover";
+import { useColorPalette } from "@nativescript-use/vue";
 import { Color, StackLayout, View } from "@nativescript/core";
 import { createNativeView, ref } from "nativescript-vue";
+import { Palette } from "~/types";
 
+const popovers: any[] = []
 
-export function usePopover(component: any, options?: Omit<PopoverOptions, "anchor">) {
+export function usePopover(component?: any, options?: Omit<PopoverOptions, "anchor">) {
     const isOpen = ref();
     const isPresented = ref();
+    const { palette } = useColorPalette<string, Palette>();
 
     function open(viewTarget: View) {
         if (!isOpen.value) {
@@ -16,20 +20,29 @@ export function usePopover(component: any, options?: Omit<PopoverOptions, "ancho
             stackLayout.addChild(view);
             isOpen.value, isPresented.value = true;
 
-            showPopover(stackLayout,
+            const { close } = showPopover(stackLayout,
                 Object.assign({
                     anchor: viewTarget,
                     onDismiss: () => (isOpen.value, isPresented.value = false),
                     onTapOutside: () => (isPresented.value = false),
-                    backgroundColor: new Color("white")
+                    backgroundColor: new Color(palette.value.colors.bgSecondary)
                 }, options)
             );
+            popovers.push(close);
+        }
+    }
+
+    function close() {
+        if (popovers.length > 0) {
+            popovers[popovers.length - 1]();
+            popovers.pop();
         }
     }
 
     return {
         isOpen,
         isPresented,
-        open
+        open,
+        close
     }
 }

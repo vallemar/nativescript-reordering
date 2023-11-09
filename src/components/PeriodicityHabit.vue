@@ -4,6 +4,7 @@ import { GridLayout, Screen, View, isIOS } from '@nativescript/core';
 import { PropType, ref } from 'nativescript-vue';
 import { Habit, Periodicity } from '~/types';
 import { animateView } from "@/utils/animation"
+import { getTextColorBasedOnBG } from '~/utils/colorUtils';
 
 const { habit } = defineProps({
   habit: {
@@ -40,7 +41,7 @@ useEventListener(habit.periodicity === Periodicity.Day ? daySwitchRef : weekSwit
   }
 })
 
-const getTextColor = (periodicity: Periodicity) => habit.periodicity === periodicity ? 'white' : 'black';
+const getTextColor = (periodicity: Periodicity) => habit.periodicity === periodicity ? getTextColorBasedOnBG(habit.color) : 'black';
 
 function chagePeriodicity(event: { object: View }, periodicity: Periodicity) {
   emit("update", periodicity);
@@ -50,8 +51,8 @@ function chagePeriodicity(event: { object: View }, periodicity: Periodicity) {
   if (shadowView && periodicityWrapView) {
     const location = (event.object as View).getLocationRelativeTo(periodicityWrapView);
     animateView(shadowView, {
-      translate: { x: location.x, y: location.y },
-      size: { width: event.object.getActualSize().width, height: event.object.getActualSize().height },
+      translate: { x: location.x - 1, y: location.y  },
+      size: { width: event.object.getActualSize().width + 2, height: event.object.getActualSize().height + 2 },
       onBeforeStartAnimation: (view) => {
         if (isIOS)
           (view.ios as UIView).transform = CGAffineTransformIdentity
@@ -65,8 +66,8 @@ function chagePeriodicity(event: { object: View }, periodicity: Periodicity) {
   <AbsoluteLayout ref="periodicityWrapRef" height="80">
     <!-- GRAY BACKGROUND -->
     <FlexboxLayout class="justify-center my-4 w-full">
-      <Label text="Every day" class="px-6 py-4 rounded-full  mr-2" color="transparent" backgroundColor="#e4e4e4"></Label>
-      <Label text="Every week" class="px-6 py-4 rounded-full ml-2" color="transparent" backgroundColor="#e4e4e4"></Label>
+      <Label text="Every day" class="px-6 py-4 rounded-full  mr-2" color="transparent" backgroundColor="#f5f5f5e5"></Label>
+      <Label text="Every week" class="px-6 py-4 rounded-full ml-2" color="transparent" backgroundColor="#f5f5f5e5"></Label>
     </FlexboxLayout>
 
     <!-- SHADOW ANIMATION -->

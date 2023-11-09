@@ -12,7 +12,6 @@ import Emoji from './Emoji.vue';
 import { useBottomSheet } from '@nativescript-community/ui-material-bottomsheet/vue3';
 import { addHabitHeightSteps } from '@/utils/mockData';
 import { useHabitStore } from '~/stores/habitStore';
-import dayjs from 'dayjs';
 import { getTodayDayFormat } from '~/utils/dateUtils';
 
 const emit = defineEmits(["finish"]);
@@ -89,7 +88,7 @@ function addHabit() {
 
 <template>
   <StackLayout top="0" verticalAlignment="bottom" originY="1" class="w-full">
-    <GridLayout class="w-full bg-white shadow ios:rounded-3xl android:rounded-t-3xl pt-1" height="260" translateY="200"
+    <GridLayout class="w-full bg ios:rounded-3xl android:rounded-t-3xl pt-1" height="260" translateY="200"
       ref="addHabitRef">
       <GridLayout height="200" class="mt-4" verticalAlignment="top">
         <MDTabs @selectedIndexChanged="selectedIndexChanged" horizontalAlignment="left" verticalAlignment="top"
@@ -97,7 +96,7 @@ function addHabit() {
           <MDTabContentItem>
             <StackLayout class="px-3 py-1 ">
               <Label text="Habit title" class=" text-3xl font-bold uber text-center"></Label>
-              <TextField v-model="habit.title" class="bg-gray-200 rounded-xl text-xl p-2 mt-3 "></TextField>
+              <TextField v-model="habit.title" class="bg-secondary rounded-xl text-xl p-2 mt-3 "></TextField>
             </StackLayout>
           </MDTabContentItem>
           <MDTabContentItem>
@@ -140,4 +139,3 @@ function addHabit() {
     </GridLayout>
   </StackLayout>
 </template>
-~/views/mockData

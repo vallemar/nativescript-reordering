@@ -7,7 +7,8 @@ export const mockData: Habit[] = [
     { id: UUID(), title: 'Coding', periodicity: Periodicity.Day, color: '#6db7fd', icon: "👨‍💻", week: buildRandomDayWeek() },
     { id: UUID(), title: 'Eat healthy', periodicity: Periodicity.Day, color: '#70d0a5', icon: "🥗", week: buildRandomDayWeek() },
     { id: UUID(), title: 'Workout', periodicity: Periodicity.Day, color: '#ee7b83', icon: "🏋️", week: buildRandomDayWeek() },
-    { id: UUID(), title: 'Reading', periodicity: Periodicity.Day, color: '#fb9e5b', icon: "📚", week: buildRandomDayWeek() }
+    { id: UUID(), title: 'Reading', periodicity: Periodicity.Day, color: '#fb9e5b', icon: "📚", week: buildRandomDayWeek() },
+    { id: UUID(), title: 'Music', periodicity: Periodicity.Day, color: '#f0f19b', icon: "🎶", week: buildRandomDayWeek() }
 ];
 
 export const maxCountDayRange = 5;

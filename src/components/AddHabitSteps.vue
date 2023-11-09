@@ -65,8 +65,8 @@ function animateStep(index: number) {
       <Icon icon="arrow_back_ios" fontSize="22" @tap="change(props.index - 1)"
         :color="props.index == 0 ? '#e9e9e9' : props.color">
       </Icon>
-      <StackLayout ref="stepsRef" v-for="(index) in 5" :key="index" class="rounded-full h-[16] w-[16] mx-2"
-        backgroundColor="#e9e9e9" @tap="change(index - 1)">
+      <StackLayout ref="stepsRef" v-for="(index) in 5" :key="index" class="rounded-full h-[16] w-[16] mx-2 bg-secondary"
+         @tap="change(index - 1)">
       </StackLayout>
       <Icon icon="arrow_forward_ios" fontSize="22" @tap="change(props.index + 1)"
         :color="props.index == 4 ? '#e9e9e9' : props.color">

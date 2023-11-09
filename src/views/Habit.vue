@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { unrefView, useEventListener } from '@nativescript-use/vue';
+import { unrefView, useColorPalette, useEventListener } from '@nativescript-use/vue';
 import { Dialogs, StackLayout, isAndroid } from '@nativescript/core';
 import { computed, ref, $navigateBack } from 'nativescript-vue';
 import Icon from '~/components/Icon.vue';
@@ -7,8 +7,10 @@ import PeriodicityHabit from '~/components/PeriodicityHabit.vue';
 import { animateView } from "@/utils/animation"
 import { useHabitStore } from '~/stores/habitStore';
 import { maxCountDayRange } from '@/utils/mockData';
-import { Periodicity } from '~/types';
+import { Palette, Periodicity } from '~/types';
 import { getTodayDayFormat } from '~/utils/dateUtils';
+import GlobalPage from '~/components/GlobalPage.vue';
+import { getTextColorBasedOnBG } from '~/utils/colorUtils';
 
 const { id } = defineProps({
   id: {
@@ -20,6 +22,7 @@ const { id } = defineProps({
 const { findById, getTodayHabitDayIndex, updateOrAddItemWeek, updateItem: updateItemStore, deleteItemById } = useHabitStore();
 const habit = findById(id)!;
 const habitCountRef = ref();
+const { palette } = useColorPalette<string, Palette>()
 
 let rotations = 0;
 const dayPositionInArray = ref(getTodayHabitDayIndex(habit));
@@ -93,7 +96,7 @@ function removeItem() {
 </script>
 
 <template>
-  <Page actionBarHidden="true" androidStatusBarBackground="white">
+  <GlobalPage>
     <GridLayout rows="auto, *">
       <!-- PERIOCITY HABIT SWITCH -->
       <StackLayout>
@@ -117,7 +120,7 @@ function removeItem() {
           </StackLayout>
         </FlexboxLayout>
         <label :text="currentDayValue" verticalAlignment="middle" horizontalAlignment="center" class="text-2xl font-bold"
-          :class="[currentDayValue === 0 ? 'text-black' : 'text-white']"></label>
+         :color="currentDayValue === 0 ? getTextColorBasedOnBG(palette.colors.bg) : getTextColorBasedOnBG(habit.color)"></label>
       </GridLayout>
 
       <!-- HABIT BUTTONS -->
@@ -126,13 +129,12 @@ function removeItem() {
           <label text="Today" class="text-lg"></label>
           <Label :text="habit?.title.toLowerCase()" class="text-lg ml-1"></Label>
         </StackLayout>
-        <FlexboxLayout class="bg-gray-200 rounded-2xl justify-between items-center mt-2" height="80" width="200">
+        <FlexboxLayout class="bg-secondary rounded-2xl justify-between items-center mt-2" height="80" width="200">
           <Icon icon="add" @tap="add" width="50%"></Icon>
           <label class="border-r-2"></label>
           <Icon icon="remove" @tap="remove" width="50%"></Icon>
         </FlexboxLayout>
       </FlexboxLayout>
     </GridLayout>
-  </Page>
+  </GlobalPage>
 </template>
-~/views/mockData
