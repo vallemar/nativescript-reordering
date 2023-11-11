@@ -61,7 +61,7 @@ function animateStep(index: number) {
 
 <template>
   <AbsoluteLayout ref="wrapStepsAnimationRef" horizontalAlignment="center" verticalAlignment="bottom">
-    <StackLayout class="text-center mb-12" orientation="horizontal">
+    <StackLayout class="text-center mb-6" orientation="horizontal">
       <Icon icon="arrow_back_ios" fontSize="22" @tap="change(props.index - 1)"
         :color="props.index == 0 ? '#e9e9e9' : props.color">
       </Icon>

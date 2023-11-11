@@ -13,8 +13,8 @@ const textColor = getTextColorBasedOnBG(bg);
 </script>
 
 <template>
-  <FlexboxLayout verticalAlignment="bottom" class=" justify-center w-full mb-8">
-    <FlexboxLayout class=" justify-between px-3 rounded-full" width="50%" @tap="emit('undo')" :backgroundColor="bg">
+  <FlexboxLayout verticalAlignment="bottom" class="justify-center w-full mb-8">
+    <FlexboxLayout class="justify-between px-3 rounded-full" width="50%" @tap="emit('undo')" :backgroundColor="bg">
       <Label text="Undo" class="text-lg" :color="textColor"></Label>
       <Icon icon="undo" :color="textColor"></Icon>
     </FlexboxLayout>

@@ -20,6 +20,7 @@ import Undo from '~/components/Undo.vue';
 import { storeToRefs } from 'pinia';
 import { collectionViewUtils } from '~/utils/collectionViewUtils';
 import { getShowDays } from '~/utils/dateUtils';
+import { useBottomSheet } from '@nativescript-community/ui-material-bottomsheet/vue3';
 
 const collectionViewRef = ref();
 const habitStore = useHabitStore();
@@ -38,14 +39,11 @@ watch(isDark, () => {
   unrefView<CollectionView>(collectionViewRef)?.refresh();
 })
 const showDays = getShowDays();
-let isFirstNavigation = true;
-
 
 function onItemReordered(e: any) {
   const view = (e.view as StackLayout);
   view.opacity = 1;
   clone(cloneObject(items));
- // syncData();
 }
 
 function onItemReorderStarting(e: any) {
@@ -54,19 +52,21 @@ function onItemReorderStarting(e: any) {
 }
 
 function addHabit() {
-  const { show, close } = useRootLayout(AddHabit, {
-    rootLayoutOption: {
-      shadeCover: SHADE_COVER,
-      animation: ANIMATION("noAnimation"),
-    },
+  const { showBottomSheet, closeBottomSheet } = useBottomSheet();
+  showBottomSheet(AddHabit, {
+    view: unrefView<View>(collectionViewRef),
+    transparent: true,
+    ignoreBottomSafeArea: true,
+    ignoreTopSafeArea: true,
+    ignoreKeyboardHeight: false,
+    animated: true,
     on: {
       finish: () => {
-       // syncData();
-        close();
+        closeBottomSheet();
       }
     },
   })
-  show();
+
 }
 
 const getValueNormalized = (indexDate: number, habit: Habit) => {
@@ -79,7 +79,6 @@ function removeItem(habit: Habit) {
   swipeMenu?.closeCurrentMenu();
   setTimeout(() => {
     deleteItemById(habit.id);
-   // syncData();
     const { show, close } = useRootLayout(Undo, {
       props: {
         bg: habit.color
@@ -94,7 +93,6 @@ function removeItem(habit: Habit) {
       on: {
         undo: () => {
           addItem(habit, currentIndex);
-       //   syncData();
           close();
         }
       },
@@ -108,7 +106,7 @@ function removeItem(habit: Habit) {
 
 <template>
   <Frame :backgroundColor="palette?.colors.bg">
-    <Page  actionBarHidden="true" :androidStatusBarBackground="palette.colors.bg">
+    <Page actionBarHidden="true" :androidStatusBarBackground="palette.colors.bg">
       <RootLayout>
         <GridLayout>
           <StackLayout>
@@ -118,7 +116,7 @@ function removeItem(habit: Habit) {
               <Icon icon="add" @tap="addHabit"></Icon>
             </FlexboxLayout>
 
-            <!-- HEADER weekdays -->
+            <!-- HEADER -->
             <GridLayout columns="*,  155" height="70" class="mx-2">
               <Label text="Habits" class="font-bold text-2xl"></Label>
               <!--  <GridLayout paddingRight="5" col="2" horizontalAlignment="right" columns="30,30,30,30,30">
@@ -137,9 +135,9 @@ function removeItem(habit: Habit) {
               <Label text="Doesn't have any habits yet" class="text-center" />
             </StackLayout>
             <!-- ITEM LIST -->
-            <CollectionView ref="collectionViewRef" class="px-1" height="100%" :items="items" rowHeight="200" colWidth="50%"
-              reorderEnabled @itemReorderStarting="onItemReorderStarting" @itemReordered="onItemReordered"
-              :reorderLongPressEnabled="true" :autoReloadItemOnLayout="true">
+            <CollectionView iosOverflowSafeArea="true" ref="collectionViewRef" class="px-1" height="100%" :items="items"
+              rowHeight="200" colWidth="50%" reorderEnabled @itemReorderStarting="onItemReorderStarting"
+              @itemReordered="onItemReordered" :reorderLongPressEnabled="true" :autoReloadItemOnLayout="true">
               <template #default="{ item, index }">
                 <SwipeMenu rightSwipeDistance="100" :translationFunction="collectionViewUtils.drawerTranslationFunction"
                   :startingSide="item.startingSide">

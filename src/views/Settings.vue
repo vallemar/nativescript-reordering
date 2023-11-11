@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { unrefView, useDark } from '@nativescript-use/vue';
-import { StackLayout, View } from '@nativescript/core';
+import { StackLayout, View, isIOS } from '@nativescript/core';
 import GlobalPage from '~/components/GlobalPage.vue';
 import switchTheme from 'react-native-theme-switch-animation';
 import "setimmediate"
@@ -22,7 +22,7 @@ function onChageTheme(args: { object: View }) {
         type: 'circular',
         duration: 700,
         startingPoint: {
-          cy: position.y + args.object.getActualSize().height,
+          cy: position.y +( args.object.getActualSize().height / (isIOS ? 2 : 1) ),
           cx: (position.x + (args.object.getActualSize().width / 2)),
         }
       },
@@ -37,7 +37,7 @@ function onChageTheme(args: { object: View }) {
     <StackLayout class="p-3">
       <Label text="Settings" class="text-2xl mt-4 font-bold"></Label>
       <StackLayout class="bg-secondary rounded-xl p-2 mt-6">
-        <FlexboxLayout class=" justify-between">
+        <FlexboxLayout class="justify-between">
           <Label text="Theme" class="text-xl"></Label>
           <Icon :icon="isDark ? 'dark_mode' : 'light'" @tap="onChageTheme"></Icon>
         </FlexboxLayout>

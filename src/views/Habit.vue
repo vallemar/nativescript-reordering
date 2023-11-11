@@ -100,7 +100,7 @@ function removeItem() {
     <GridLayout rows="auto, *">
       <!-- PERIOCITY HABIT SWITCH -->
       <StackLayout>
-        <FlexboxLayout class=" justify-between px-3">
+        <FlexboxLayout class="justify-between px-3">
           <Icon icon="menu"></Icon>
           <Icon icon="delete" @tap="removeItem()"></Icon>
         </FlexboxLayout>

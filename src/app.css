@@ -14,7 +14,8 @@
   font-size: 34;
 }
 
-.ns-root, .ns-modal {
+.ns-root,
+.ns-modal {
   /* Definition */
   --bg-light: #FFFFFF;
   --bg-dark: #1C2128;
@@ -29,35 +30,50 @@
   --text: var(--text-light);
 }
 
-.ns-root.ns-dark,  .ns-modal.ns-dark  {
+.ns-root.ns-dark,
+.ns-modal.ns-dark {
   --bg: var(--bg-dark);
   --bg-secondary: var(--bg-secondary-dark);
   --text: var(--text-dark);
 }
 
-Label {
+Label,
+TextView,
+TextField {
   color: var(--text);
 }
 
+TextView,
+TextField {
+  placeholder-color: var(--text);
+}
 
-Page, .bg {
+Page,
+.bg {
   background-color: var(--bg);
 }
 
 .bg-secondary {
   background-color: var(--bg-secondary);
 }
-.shadow{
+
+.shadow {
   box-shadow: 0px px 8px 0px rgba(189, 189, 189, 0.75);
 }
 
 
-TextField.uber, Label.uber{
-  font-family: "Uber Move", "UberMoveMedium"; font-weight: 500; 
+TextField.uber,
+Label.uber {
+  font-family: "Uber Move", "UberMoveMedium";
+  font-weight: 500;
 }
-.light{
-  font-family: "Uber Move", "UberMove-Light"; font-weight: 300; 
+
+.light {
+  font-family: "Uber Move", "UberMove-Light";
+  font-weight: 300;
 }
-.bold{
-  font-family: "Uber Move", "UberMoveBold"; font-weight: 700; 
+
+.bold {
+  font-family: "Uber Move", "UberMoveBold";
+  font-weight: 700;
 }

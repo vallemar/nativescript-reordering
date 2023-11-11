@@ -18,7 +18,7 @@ export class ColorPicker {
                     new com.skydoves.colorpickerview.listeners.ColorEnvelopeListener({
                         onColorSelected(colorEnvelope: com.skydoves.colorpickerview.ColorEnvelope, fromUser: boolean) {
                             if (self.onChangeColor) {                                
-                                const color = java.lang.Integer.parseInt(colorEnvelope.getHexCode(), 16);
+                                const color = java.lang.Long.parseLong(colorEnvelope.getHexCode(), 16);
                                 const red = (color >> 16) & 0xFF;
                                 const green = (color >> 8) & 0xFF;
                                 const blue = (color) & 0xFF;

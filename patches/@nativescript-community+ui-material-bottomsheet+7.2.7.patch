@@ -1,0 +1,17 @@
+diff --git a/node_modules/@nativescript-community/ui-material-bottomsheet/bottomsheet.ios.js b/node_modules/@nativescript-community/ui-material-bottomsheet/bottomsheet.ios.js
+index cfb9105..6185fed 100644
+--- a/node_modules/@nativescript-community/ui-material-bottomsheet/bottomsheet.ios.js
++++ b/node_modules/@nativescript-community/ui-material-bottomsheet/bottomsheet.ios.js
+@@ -382,7 +382,7 @@ export class ViewWithBottomSheet extends ViewWithBottomSheetBase {
+             return;
+         }
+         const parentController = parentWithController.viewController;
+-        const animated = this.viewController.nsAnimated;
++        const animated = true;
+         parentController.dismissViewControllerAnimatedCompletion(animated, whenClosedCallback);
+     }
+     _unloadBottomSheet() {
+diff --git a/node_modules/@nativescript-community/ui-material-bottomsheet/platforms/android/ui_material_bottomsheet.aar b/node_modules/@nativescript-community/ui-material-bottomsheet/platforms/android/ui_material_bottomsheet.aar
+new file mode 100644
+index 0000000..b9b2f04
+Binary files /dev/null and b/node_modules/@nativescript-community/ui-material-bottomsheet/platforms/android/ui_material_bottomsheet.aar differ
